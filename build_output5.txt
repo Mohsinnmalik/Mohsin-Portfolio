@@ -1,0 +1,32 @@
+
+> ai-engineer-portfolio@0.1.0 build
+> next build
+
+  ▲ Next.js 14.2.35
+
+   Creating an optimized production build ...
+Failed to compile.
+
+./src/components/reactbits/LogoLoop.tsx
+Error: 
+  [31mx[0m Unexpected token `div`. Expected jsx identifier
+    ,-[[36;1;4mC:\Users\MOHSIN MALIK\Desktop\Mohsin Portfolio\src\components\reactbits\LogoLoop.tsx[0m:72:1]
+ [2m72[0m |   }, [speed, gap, vertical]);
+ [2m73[0m | 
+ [2m74[0m |   return (
+ [2m75[0m |     <div
+    : [31;1m     ^^^[0m
+ [2m76[0m |       className={`logoloop ${vertical ? 'logoloop--vertical' : ''} ${className}`}
+ [2m77[0m |       style={
+ [2m77[0m |         {
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./src/components/reactbits/LogoLoop.tsx
+./src/app/page.tsx
+
+
+> Build failed because of webpack errors

@@ -1,0 +1,18 @@
+
+C:\Users\MOHSIN MALIK\Desktop\Mohsin Portfolio\src\components\sections\About.tsx
+  16:93  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+
+C:\Users\MOHSIN MALIK\Desktop\Mohsin Portfolio\src\components\sections\Contact.tsx
+  18:101  error  Comments inside children section of tag should be placed inside braces  react/jsx-no-comment-textnodes
+  19:19   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`         react/no-unescaped-entities
+  25:14   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`         react/no-unescaped-entities
+  25:212  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`         react/no-unescaped-entities
+
+C:\Users\MOHSIN MALIK\Desktop\Mohsin Portfolio\src\components\sections\Impact.tsx
+  20:110  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  24:17   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  24:57   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  24:198  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+✖ 9 problems (9 errors, 0 warnings)
+
