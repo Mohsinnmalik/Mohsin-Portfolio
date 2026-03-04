@@ -485,6 +485,216 @@
   }
 }
 
+/*!******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./src/components/panels/ExperienceTimeline.css ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************/
+/* ExperienceTimeline.css */
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap');
+
+.timeline-wrapper {
+    padding: 120px 0;
+    background-color: #0a0f1d;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.timeline-container {
+    position: relative;
+    width: 95vw;
+    max-width: 1600px;
+    height: 750px;
+    max-height: 85vh;
+    margin: 0 auto;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    cursor: grab;
+}
+
+.timeline-container:active {
+    cursor: grabbing;
+}
+
+.timeline-draggable-canvas {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 4%;
+}
+
+/* 3-Zone Layout Spacing (Editorial) */
+.timeline-content-zone {
+    width: 38%;
+    padding-right: 60px;
+    z-index: 30;
+    pointer-events: none;
+}
+
+.timeline-photo-zone {
+    width: 32%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    position: relative;
+}
+
+.timeline-peek-zone {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 80px;
+    opacity: 0.2;
+    filter: blur(4px);
+    transform: scale(0.85);
+    pointer-events: none;
+    transition: all 0.5s ease;
+}
+
+/* Polaroids: Editorial Overlap */
+.photo-cluster {
+    position: relative;
+    width: 450px;
+    height: 550px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.polaroid-frame {
+    position: absolute;
+    background: #0f172a;
+    border: 10px solid #1e293b; /* Thicker borders */
+    border-radius: 4px;
+    padding: 12px 12px 50px 12px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.9);
+    transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.polaroid-frame.main {
+    z-index: 10;
+    border: 10px solid rgba(255, 255, 255, 0.95); /* Crisp bright border */
+    transform: scale(1.05);
+}
+
+.polaroid-img {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+       object-fit: cover;
+    filter: contrast(1.05) brightness(0.95);
+}
+
+/* Typography Editorial */
+.timeline-date {
+    font-family: ui-monospace, monospace;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #f97316;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    margin-bottom: 1.25rem;
+    display: block;
+}
+
+.timeline-title {
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.05em;
+}
+
+.timeline-desc {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    line-height: 1.7;
+    max-width: 480px;
+}
+
+/* Annotations: Chalky Amber */
+.annotation {
+    position: absolute;
+    font-family: 'Caveat', cursive;
+    font-size: 1.6rem;
+    color: #fbbf24; /* Amber 400 */
+    text-shadow: 0 2px 15px rgba(251, 191, 36, 0.4);
+    white-space: nowrap;
+    z-index: 40;
+    opacity: 0.9;
+}
+
+.annotation-arrow {
+    position: absolute;
+    fill: none;
+    stroke: rgba(251, 191, 36, 0.7);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+}
+
+/* Scrubber (Floating Video-Editor Style) */
+.timeline-scrubber-track {
+    height: 100px;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.8));
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    padding: 0 60px;
+}
+
+.timeline-scrubber-item {
+    flex: 0 0 85px;
+    height: 55px;
+    margin-right: 25px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.25;
+    transition: all 0.4s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.timeline-scrubber-item.active {
+    opacity: 1;
+    transform: scale(1.1);
+    border-color: #f97316;
+}
+
+/* Mobile: Fluid & Compact */
+@media (max-width: 1024px) {
+    .timeline-container { height: auto; min-height: unset; padding-bottom: 30px; }
+    .timeline-draggable-canvas { flex-direction: column; padding: 60px 24px; }
+    .timeline-content-zone, .timeline-photo-zone, .timeline-peek-zone { width: 100%; padding: 0; }
+    .timeline-peek-zone { display: none; }
+    .timeline-photo-zone { margin: 60px 0; }
+    .photo-cluster { width: 340px; height: 420px; }
+    .timeline-title { font-size: 3rem; text-align: center; }
+    .timeline-content-zone { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .timeline-desc { font-size: 1.1rem; }
+}
+
+@media (max-width: 640px) {
+    .timeline-wrapper { padding: 60px 0; }
+    .timeline-container { width: 100vw; border-radius: 0; border-left: none; border-right: none; }
+    .photo-cluster { width: 280px; height: 350px; }
+    .timeline-title { font-size: 2.25rem; }
+}
+
 /*!***************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!./src/components/panels/ShowcaseSection.css ***!
   \***************************************************************************************************************************************************************************************************************************************************************************************/

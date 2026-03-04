@@ -1,6 +1,7 @@
 import { HeroSection } from "@/components/cinematic-hero";
 import { AboutPanel } from "@/components/panels/AboutPanel";
 import { SkillsPanel } from "@/components/panels/SkillsPanel";
+import { ExperienceTimeline } from "@/components/panels/ExperienceTimeline";
 import ShowcaseSection from "@/components/panels/ShowcaseSection";
 import { ContactPanel } from "@/components/panels/ContactPanel";
 import TargetCursor from "@/components/reactbits/TargetCursor";
@@ -14,9 +15,8 @@ export default function Home() {
         <HeroSection />
         <AboutPanel />
         <SkillsPanel />
-        
         <ShowcaseSection />
-
+        <ExperienceTimeline />
         <ContactPanel />
       </div>
     </main>
