@@ -95,29 +95,19 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     setAiResponse("Processing prompt through Gemini...");
     
     try {
-      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
-      if (!apiKey) {
-        setAiResponse("Error: Gemini API key is missing from environment variables.");
-        return;
-      }
-
-      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [{ text: `You are Mohsin, the Founder of CodeFlux. Respond concisely (under 3 sentences) to: ${textToAnalyze}` }]
-          }]
-        })
+      const gRes = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: textToAnalyze })
       });
 
-      const data = await res.json();
+      const data = await gRes.json();
       
-      if (!res.ok) {
-        throw new Error(data.error?.message || "Failed to generate content");
+      if (!gRes.ok) {
+        throw new Error(data.error || "Failed to generate content");
       }
 
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm having trouble thinking right now.";
+      const reply = data.reply || "I'm having trouble thinking right now.";
       setAiResponse(reply);
 
       // Call our secure Next.js API route for ElevenLabs TTS
