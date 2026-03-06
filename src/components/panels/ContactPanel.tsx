@@ -40,6 +40,7 @@ export function ContactPanel() {
                 src="/images/contact-avatar.jpg" 
                 alt="Get In Touch"
                 fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover mix-blend-lighten filter brightness-110 contrast-125 select-none z-10"
                 style={{
                   maskImage: "radial-gradient(ellipse at center, black 65%, transparent 100%)",

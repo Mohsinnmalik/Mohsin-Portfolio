@@ -41,7 +41,7 @@ interface ProfileCardProps {
 
 const ProfileCardComponent: React.FC<ProfileCardProps> = ({
   avatarUrl = '/images/mohsin-avatar.jpg',
-  iconUrl = '/assets/demo/iconpattern.png',
+  iconUrl = '',
   grainUrl = '',
   innerGradient,
   behindGlowEnabled = true,

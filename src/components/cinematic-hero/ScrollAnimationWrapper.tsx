@@ -1,17 +1,21 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { useThree } from "@react-three/fiber";
+import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useUIStore } from "@/store/useUIStore";
 
 export function ScrollAnimationWrapper({ children, containerRef }: { children: React.ReactNode, containerRef: React.RefObject<HTMLDivElement> }) {
   const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
+  const aiMode = useUIStore((state) => state.aiMode);
   
-  // Create references to initial state to prevent drift on resize/refresh
-  const initialCamZ = 2.5;
+  // Track GSAP's intended values
+  const gsapGroupPos = useRef(new THREE.Vector3(0, 0, 0));
+  const gsapGroupRot = useRef(new THREE.Euler(0, 0, 0));
+  const gsapCamPos = useRef(new THREE.Vector3(0, 1.2, 2.5));
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -32,29 +36,29 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
         }
       });
       
-      // Phase 1 (0-25%): Camera slowly pushes closer
-      tl.to(camera.position, {
+      // Phase 1 (0-25%): Camera pushes closer
+      tl.to(gsapCamPos.current, {
         z: 1.8,
         ease: "none",
         duration: 1
       }, 0);
 
-      // Phase 2 (25-50%): Model rotates slightly (max 15 degrees = ~0.26 radians)
-      tl.to(groupRef.current.rotation, {
+      // Phase 2 (25-50%): Model rotates
+      tl.to(gsapGroupRot.current, {
         y: 0.26,
         ease: "none",
         duration: 1
       }, 1);
 
-      // Phase 3 (50-70%): Model shifts slightly left to make room for text
-      tl.to(groupRef.current.position, {
+      // Phase 3 (50-70%): Model shifts left
+      tl.to(gsapGroupPos.current, {
         x: -0.6,
         ease: "none",
         duration: 0.8
       }, 2);
       
-      // Phase 4 (70-100%): Hold position smoothly while text fades in via separate HTML animation
-      tl.to(groupRef.current.position, {
+      // Phase 4 (70-100%): Hold position
+      tl.to(gsapGroupPos.current, {
         x: -0.6,
         ease: "none",
         duration: 1.2
@@ -65,16 +69,13 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
       };
     });
     
-    // Mobile simpler animation mapping
     mm.add("(max-width: 767px)", () => {
         if (!groupRef.current || !containerRef.current) return;
         
-        // Reset to mobile friendly positions
         gsap.set(groupRef.current.scale, { x: 0.9, y: 0.9, z: 0.9 });
-        gsap.set(groupRef.current.position, { y: -0.2 }); // Drop it slightly to fit text
-        gsap.set(camera.position, { z: 3.5 }); // Pull camera back
+        gsap.set(gsapGroupPos.current, { y: -0.2 }); 
+        gsap.set(gsapCamPos.current, { z: 3.5 }); 
         
-        // Simpler mobile scroll timeline, no heavy movement
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: containerRef.current,
@@ -85,7 +86,7 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
           }
         });
         
-        tl.to(groupRef.current.rotation, {
+        tl.to(gsapGroupRot.current, {
            y: 0.15,
            ease: "power1.inOut",
            duration: 1 
@@ -97,9 +98,45 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
     });
 
     return () => {
-      mm.revert(); // clean up matchMedia
+      mm.revert(); 
     };
-  }, [camera, containerRef]);
+  }, [containerRef]);
+
+  // Continuously apply either GSAP's intended state, or the AI Mode state
+  useFrame(() => {
+    if (!groupRef.current) return;
+
+    if (aiMode) {
+      // Cinematic Zoom for AI Mode
+      // Match the values from the previous dedicated page:
+      // Camera: [0, 1.2, 1.8]
+      // Model position: [-0.6, -2.4, 0] inside Scene3D
+      // We are wrapping the model, so we lerp the wrapper group and camera
+      
+      const targetCamPos = new THREE.Vector3(0, 1.2, 1.8);
+      const targetGroupPos = new THREE.Vector3(-0.6, 0, 0); // Scene3D already applies -2.4 Y
+      const targetGroupRot = new THREE.Euler(0, 0.26, 0);
+
+      camera.position.lerp(targetCamPos, 0.05);
+      groupRef.current.position.lerp(targetGroupPos, 0.05);
+      
+      // Lerp rotation smoothly
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, targetGroupRot.x, 0.05);
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, targetGroupRot.y, 0.05);
+      groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, targetGroupRot.z, 0.05);
+      
+    } else {
+      // Return to GSAP controlled proxy values smoothly
+      camera.position.lerp(gsapCamPos.current, 0.08);
+      groupRef.current.position.lerp(gsapGroupPos.current, 0.08);
+      
+      groupRef.current.rotation.x = THREE.MathUtils.lerp(groupRef.current.rotation.x, gsapGroupRot.current.x, 0.08);
+      groupRef.current.rotation.y = THREE.MathUtils.lerp(groupRef.current.rotation.y, gsapGroupRot.current.y, 0.08);
+      groupRef.current.rotation.z = THREE.MathUtils.lerp(groupRef.current.rotation.z, gsapGroupRot.current.z, 0.08);
+    }
+    
+    camera.lookAt(0, 0, 0); // Keep lookAt centered
+  });
 
   return <group ref={groupRef}>{children}</group>;
 }

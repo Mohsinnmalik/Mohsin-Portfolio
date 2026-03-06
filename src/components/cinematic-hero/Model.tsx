@@ -1,13 +1,33 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
 import * as THREE from "three";
+import { useUIStore } from "@/store/useUIStore";
 
 export function Model(props: any) {
   const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/mohsin.glb");
+  const setAiMode = useUIStore((state) => state.setAiMode);
+
+  const [isHolding, setIsHolding] = useState(false);
+  const holdTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const handlePointerDown = (e: any) => {
+    e.stopPropagation();
+    setIsHolding(true);
+    holdTimer.current = setTimeout(() => {
+      setIsHolding(false);
+      setAiMode(true);
+    }, 5000);
+  };
+
+  const handlePointerUp = (e: any) => {
+    e.stopPropagation();
+    setIsHolding(false);
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+  };
 
   // Apply materials gracefully to fix harsh, plastic lighting
   useEffect(() => {
@@ -20,11 +40,8 @@ export function Model(props: any) {
           const mat = mesh.material as THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial;
           mat.side = THREE.DoubleSide;
           
-          // Force a very matte, non-reflective finish
-          // Prevent any environment calculations
           mat.envMapIntensity = 0;
           
-          // Disable complex material features for performance
           if (window.innerWidth <= 768) {
              mat.roughness = 1;
              mat.metalness = 0;
@@ -33,15 +50,11 @@ export function Model(props: any) {
              mat.metalness = 0.0;
           }
           mat.flatShading = false;
-          
-          // Disable environment reflections entirely which cause the "wet" or plastic look
           mat.envMapIntensity = 0.0; 
           
-          // If the material has a color, we can warm it up significantly
           if (mat.color) {
             const hsl = { h: 0, s: 0, l: 0 };
             mat.color.getHSL(hsl);
-            // Blend heavily with a very warm, soft peach/cream color to remove cool digital tones
             if (hsl.s > 0) {
               mat.color.lerp(new THREE.Color("#ffeed4"), 0.15); 
             }
@@ -58,25 +71,41 @@ export function Model(props: any) {
 
   useFrame((state) => {
     if (group.current) {
-      // Disable all these calculations on mobile to save CPU
-      if (window.innerWidth <= 768) return;
+      if (isHolding) {
+        // Vibration effect: random tiny offsets on XYZ
+        const xOffset = (Math.random() - 0.5) * 0.05;
+        const yOffset = (Math.random() - 0.5) * 0.05;
+        const zOffset = (Math.random() - 0.5) * 0.05;
+        group.current.position.set(xOffset, yOffset, zOffset);
+      } else {
+        // Normal behavior
+        // Need to reset to zero since we offset it during vibration
+        const targetY = Math.sin(state.clock.elapsedTime * 0.8) * 0.02;
+        group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetY, 0.1);
+        group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, 0, 0.1);
+        group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, 0, 0.1);
 
-      // Subtle cinematic idling
-      const targetY = Math.sin(state.clock.elapsedTime * 0.8) * 0.02;
-      group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetY, 0.1);
+        if (window.innerWidth > 768) {
+          const targetRotationX = (state.pointer.y * 0.1) + (Math.cos(state.clock.elapsedTime * 0.4) * 0.01);
+          const targetRotationY = (state.pointer.x * 0.2) + (Math.sin(state.clock.elapsedTime * 0.4) * 0.01);
 
-      // Mouse tracking rotation (very subtle, soft, and delayed)
-      // Pointer maps from -1 to 1 on X and Y
-      const targetRotationX = (state.pointer.y * 0.1) + (Math.cos(state.clock.elapsedTime * 0.4) * 0.01);
-      const targetRotationY = (state.pointer.x * 0.2) + (Math.sin(state.clock.elapsedTime * 0.4) * 0.01);
-
-      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetRotationX, 0.05);
-      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotationY, 0.05);
+          group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, targetRotationX, 0.05);
+          group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotationY, 0.05);
+        }
+      }
     }
   });
 
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group 
+      ref={group} 
+      {...props} 
+      dispose={null}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
       <primitive object={scene} />
     </group>
   );
