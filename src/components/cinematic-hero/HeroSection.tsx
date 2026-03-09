@@ -91,25 +91,26 @@ export function HeroSection() {
               exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
               className="hero-text w-full md:w-5/12 text-left pointer-events-auto mt-20 md:mt-0"
             >
-              <p className="text-emerald-400 font-mono tracking-wider text-sm mb-3 uppercase drop-shadow-sm">
+              <p className="text-emerald-400 font-mono tracking-wider text-sm mb-3 uppercase drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">
                 Full Stack Developer & AI Enthusiast
               </p>
-              <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-white mb-6">
+              <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-white mb-6">
                 Mohsin Malik
                 <br />
                 <span className="font-light text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-slate-500">
                   Hello there!
                 </span>
               </h1>
-              <p className="text-slate-400 text-base md:text-lg font-light leading-relaxed max-w-md mb-8">
+              <p className="text-slate-400 text-base md:text-lg font-light leading-relaxed max-w-md mb-10">
                 Specializing in scalable backend architectures, machine learning integration, and high-performance full-stack applications. Bridging theory with production.
               </p>
               
-              <div className="flex flex-wrap gap-4">
-                <button className="px-6 py-3 rounded-md bg-white text-black font-medium text-sm hover:bg-slate-200 transition-colors duration-300">
-                  View Projects
+              <div className="flex flex-wrap gap-5">
+                <button className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm tracking-wide hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-[0_0_20px_rgba(249,115,22,0.25)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 relative overflow-hidden group">
+                  <span className="relative z-10">View Projects</span>
+                  <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                 </button>
-                <button className="px-6 py-3 rounded-md border border-slate-700 text-white font-medium text-sm hover:bg-slate-800 transition-colors duration-300">
+                <button className="px-8 py-3.5 rounded-xl border border-orange-500/50 text-orange-400 font-bold text-sm tracking-wide hover:bg-orange-500/10 hover:border-orange-500 transition-all duration-300 active:scale-95">
                   Read Resume
                 </button>
               </div>

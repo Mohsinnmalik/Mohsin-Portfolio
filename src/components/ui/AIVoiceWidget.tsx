@@ -2,7 +2,7 @@
 
 import { useUIStore } from "@/store/useUIStore";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mic, X, Terminal } from "lucide-react";
+import { Mic, X, Terminal, Activity } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
 export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
@@ -92,7 +92,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
   const handleAnalyze = async (textToAnalyze: string) => {
     if (!textToAnalyze || textToAnalyze === "Listening...") return;
     
-    setAiResponse("Processing prompt through Gemini...");
+    setAiResponse("Analyzing...");
     
     try {
       const gRes = await fetch('/api/gemini', {
@@ -147,52 +147,76 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     <AnimatePresence>
       {aiMode && (
         <motion.div
-          initial={{ opacity: 0, x: 50, filter: "blur(10px)" }}
-          animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, x: 50, filter: "blur(10px)" }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.5 }} 
-          className="pointer-events-auto fixed right-6 md:right-12 top-1/2 -translate-y-1/2 w-full max-w-sm z-40"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }} 
+          className="fixed inset-0 z-50 pointer-events-none flex flex-col items-center justify-end pb-12 px-6 md:pb-20"
         >
-          {/* Main Widget Card */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-6 backdrop-blur-xl shadow-2xl">
-            {/* Top Bar */}
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="relative flex h-3 w-3">
-                  <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${isSpeaking ? 'bg-blue-400 animate-ping duration-300' : 'bg-emerald-400 animate-ping'}`}></span>
-                  <span className={`relative inline-flex rounded-full h-3 w-3 ${isSpeaking ? 'bg-blue-500' : 'bg-emerald-500'}`}></span>
-                </div>
-                <span className={`text-xs font-mono uppercase tracking-wider ${isSpeaking ? 'text-blue-400' : 'text-emerald-400'}`}>
-                  {isSpeaking ? 'AI Speaking...' : 'System Online'}
-                </span>
-              </div>
-              <button
-                onClick={() => setAiMode(false)}
-                className="text-slate-400 hover:text-white transition-colors"
-                title="Close AI Mode"
-              >
+          {/* Subtle Dark Vignette Overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/80 pointer-events-none" />
+
+          {/* Exit Button - Top Right */}
+          <div className="absolute top-8 right-8 pointer-events-auto">
+            <button
+              onClick={() => {
+                if (forceShow) window.location.href = '/'; 
+                else setAiMode(false);
+              }}
+              className="group flex flex-col items-center gap-2 text-white/40 hover:text-white transition-colors duration-300"
+            >
+              <div className="w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center group-hover:bg-white/10 group-hover:scale-105 transition-all">
                 <X size={20} />
-              </button>
+              </div>
+              <span className="text-[10px] uppercase tracking-widest font-mono">Exit AI</span>
+            </button>
+          </div>
+
+          {/* Cinematic AI Subtitles */}
+          <div className="relative z-10 w-full max-w-4xl flex flex-col items-center text-center">
+            
+            <AnimatePresence mode="wait">
+              <motion.p 
+                key={aiResponse}
+                initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+                className="text-2xl md:text-5xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.2)] mb-8"
+              >
+                {aiResponse}
+              </motion.p>
+            </AnimatePresence>
+
+            {/* Glowing System Status Banner */}
+            <div className="flex items-center gap-3 mb-10 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+              <div className="relative flex h-2 w-2">
+                <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${isSpeaking ? 'bg-blue-400 animate-ping' : (isListening ? 'bg-red-400 animate-ping' : 'bg-orange-500 animate-pulse')}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${isSpeaking ? 'bg-blue-500' : (isListening ? 'bg-red-500' : 'bg-orange-500')}`}></span>
+              </div>
+              <span className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isSpeaking ? 'text-blue-400' : (isListening ? 'text-red-400' : 'text-orange-400')}`}>
+                {isSpeaking ? 'AI Speaking' : (isListening ? 'Receiving Audio' : 'Awaiting Input')}
+              </span>
             </div>
 
-            {/* AI Text Display */}
-            <div className="min-h-[120px] mb-6 rounded-lg border border-white/5 bg-black/50 p-4 relative">
-               <Terminal className="absolute top-4 right-4 text-white/10" size={40} />
-               <p className="text-sm text-slate-300 leading-relaxed font-mono relative z-10">
-                 {aiResponse}
-               </p>
-            </div>
+            {/* Hold to Speak Interaction Ring */}
+            <div className="relative flex items-center justify-center pointer-events-auto group mt-4">
+              
+              {/* Outer Glowing Waves */}
+              {isListening && (
+                <>
+                  <motion.div animate={{ scale: [1, 1.8], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }} className="absolute w-24 h-24 rounded-full border border-red-500/50" />
+                  <motion.div animate={{ scale: [1, 2.5], opacity: [0.3, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut", delay: 0.2 }} className="absolute w-24 h-24 rounded-full border border-red-500/30" />
+                </>
+              )}
+              {isSpeaking && (
+                <>
+                  <motion.div animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className="absolute w-[110px] h-[110px] rounded-full border-t border-b border-blue-500/40" />
+                  <motion.div animate={{ scale: [1, 1.1, 1], rotate: [360, 180, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "linear" }} className="absolute w-[120px] h-[120px] rounded-full border-l border-r border-blue-400/20" />
+                </>
+              )}
 
-            {/* User Transcript */}
-            <div className="mb-6 h-[40px] flex items-center">
-               <p className="text-sm font-light italic text-slate-500 border-l-2 border-emerald-500/50 pl-3">
-                 {transcript ? `"${transcript}"` : "..."}
-               </p>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-4 mt-auto">
-              {/* Mic Button */}
+              {/* Main Button */}
               <button
                 onPointerDown={handlePointerDown}
                 onPointerUp={handlePointerUp}
@@ -201,29 +225,29 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
                 onTouchStart={handlePointerDown}
                 onTouchEnd={handlePointerUp}
                 onTouchCancel={handlePointerUp}
-                className={`flex-1 py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition-all duration-300 touch-none select-none ${
+                className={`relative z-10 w-24 h-24 rounded-full flex items-center justify-center transition-all duration-300 touch-none select-none backdrop-blur-xl ${
                   isListening
-                    ? "bg-red-500/20 text-red-400 border border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]"
-                    : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/50 hover:bg-emerald-500/30"
+                    ? "bg-red-500/10 border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.5)] scale-95"
+                    : isSpeaking
+                      ? "bg-blue-500/10 border border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+                      : "bg-white/5 border border-white/20 hover:bg-orange-500/10 hover:border-orange-500/50 hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:scale-105"
                 }`}
               >
-                <Mic size={18} className={isListening ? "animate-pulse" : ""} />
-                {isListening ? "Recording..." : "Hold to Speak"}
-              </button>
-
-              <button 
-                 onClick={() => {
-                   if (forceShow) {
-                     window.location.href = '/'; 
-                   } else {
-                     setAiMode(false);
-                   }
-                 }}
-                 className="flex-shrink-0 px-4 py-3 rounded-xl border border-white/10 text-white/70 hover:bg-white/5 hover:text-white transition-colors text-sm font-medium"
-              >
-                {forceShow ? "Back to Portfolio" : "Exit"}
+                {isListening ? (
+                  <Activity size={32} className="text-red-500 animate-pulse" />
+                ) : (
+                  <Mic size={32} className={isSpeaking ? "text-blue-400" : "text-white/70 group-hover:text-orange-400 transition-colors"} />
+                )}
               </button>
             </div>
+
+            {/* Live User Transcript */}
+            <div className="h-[40px] mt-6 flex items-center justify-center w-full">
+               <p className="text-sm font-mono tracking-widest text-white/40 uppercase">
+                 {transcript ? `"${transcript}"` : (isListening ? "Listening..." : "Hold orbital to speak")}
+               </p>
+            </div>
+
           </div>
         </motion.div>
       )}
