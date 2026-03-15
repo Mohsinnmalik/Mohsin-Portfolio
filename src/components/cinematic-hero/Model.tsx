@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { useGLTF } from "@react-three/drei";
+import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useUIStore } from "@/store/useUIStore";
+import { DoodleHint } from "../ui/DoodleHint";
 
 export function Model(props: any) {
   const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/mohsin.glb");
   const setAiMode = useUIStore((state) => state.setAiMode);
+  const aiMode = useUIStore((state) => state.aiMode);
 
   const [isHolding, setIsHolding] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
@@ -107,6 +109,19 @@ export function Model(props: any) {
       onPointerCancel={handlePointerUp}
     >
       <primitive object={scene} />
+
+      {!aiMode && (
+        <Html 
+          position={[0.6, 1.2, 0]} 
+          center 
+          zIndexRange={[100, 0]}
+          className="pointer-events-none"
+        >
+          <div style={{ transform: "scale(1.5)", zIndex: 999 }}>
+            <DoodleHint />
+          </div>
+        </Html>
+      )}
     </group>
   );
 }

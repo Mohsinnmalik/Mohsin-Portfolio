@@ -1,0 +1,27 @@
+.stb-text {
+  font-size: clamp(5rem, 15vw, 12rem);
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  margin: 0;
+  padding: 0 2rem;
+  letter-spacing: -0.02em;
+}
+
+.stb-stroke {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+}
+
+.stb-fill {
+  text-shadow: 0 0 30px rgba(249, 115, 22, 0.3);
+}
+
+.stb-separator {
+  display: inline-block;
+  width: clamp(2rem, 5vw, 4rem);
+  height: clamp(5px, 1vw, 10px);
+  background: rgba(255, 255, 255, 0.2);
+  margin: auto 2rem;
+  border-radius: 10px;
+}

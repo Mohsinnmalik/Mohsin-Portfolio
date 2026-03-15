@@ -1,13 +1,32 @@
 "use client";
 
 import SplitText from "../reactbits/SplitText";
-import FadeContent from "../reactbits/FadeContent";
+import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import ProfileCard from "../reactbits/ProfileCard";
+import { useRef } from "react";
 
 export function AboutPanel() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"] // Start tracking when top of panel hits bottom of viewport, end when panel is centered
+  });
+
+  // Left card slides from -300px to 0 as scroll progresses from 0 to 1
+  const xTransformLeft = useTransform(scrollYProgress, [0, 1], [-300, 0]);
+  // Right text slides from +300px to 0
+  const xTransformRight = useTransform(scrollYProgress, [0, 1], [300, 0]);
+  // Opacity fades in along the way
+  const opacityTransform = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   return (
-    <section id="about" className="py-24 bg-[#0B1121] text-slate-300 relative overflow-hidden z-20">
+    <section 
+      id="about" 
+      className="py-24 bg-[#0B1121] text-slate-300 relative overflow-hidden z-20"
+      ref={containerRef}
+    >
       <div className="container mx-auto px-6 md:px-12 max-w-7xl">
         {/* Header */}
         <div className="text-center mb-16">
@@ -20,9 +39,12 @@ export function AboutPanel() {
           />
         </div>
 
-        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20 overflow-hidden px-4 md:px-0">
           
-          <div className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0 relative h-[450px] lg:h-[540px]">
+          <motion.div 
+            style={{ x: xTransformLeft, opacity: opacityTransform }}
+            className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0 relative h-[450px] lg:h-[540px]"
+          >
             <ProfileCard
               name="Mohsin Malik"
               title="AI Engineer"
@@ -34,22 +56,18 @@ export function AboutPanel() {
               enableTilt={true}
               enableMobileTilt={false}
               behindGlowColor="#f97316"
-              behindGlowSize="50%"
-              behindGlowEnabled={true}
+              behindGlowSize="25%"
+              behindGlowEnabled={false}
               miniAvatarUrl="/images/about-avatar.jpg"
               onContactClick={() => window.location.href = "#contact"}
               innerGradient="linear-gradient(145deg, rgba(8, 11, 22, 0.8) 0%, rgba(249, 115, 22, 0.1) 100%)"
               className="w-full h-full max-w-sm lg:max-w-md mx-auto"
             />
-          </div>
+          </motion.div>
 
           {/* Right: Content & Stats */}
-          <FadeContent 
-            blur={true} 
-            duration={1.2} 
-            ease="power2.out" 
-            initialOpacity={0}
-            delay={200}
+          <motion.div 
+            style={{ x: xTransformRight, opacity: opacityTransform }}
             className="w-full md:w-1/2"
           >
             <p className="text-lg md:text-xl text-slate-400 leading-relaxed mb-8">
@@ -74,7 +92,7 @@ export function AboutPanel() {
             <button className="px-8 py-4 rounded-full border border-orange-500/50 text-white font-medium hover:bg-orange-500 transition-colors duration-300 w-fit shrink-0">
               Learn More
             </button>
-          </FadeContent>
+          </motion.div>
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import { Scene3D } from "./Scene3D";
 import { useUIStore } from "@/store/useUIStore";
 import { AnimatePresence, motion } from "framer-motion";
 import { AIVoiceWidget } from "@/components/ui/AIVoiceWidget";
+import { DoodleHint } from "@/components/ui/DoodleHint";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -85,13 +86,15 @@ export function HeroSection() {
         <AnimatePresence mode="wait">
           {!isMounted || !aiMode ? (
             /* Right-aligned text block that fades in late in the scroll */
-            <motion.div 
-              key="hero-text"
-              initial={{ opacity: 1 }}
-              exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
-              className="hero-text w-full md:w-5/12 text-left pointer-events-auto mt-20 md:mt-0"
-            >
-              <p className="text-emerald-400 font-mono tracking-wider text-sm mb-3 uppercase drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">
+            <>
+              <DoodleHint key="doodle-hint" />
+              <motion.div 
+                key="hero-text"
+                initial={{ opacity: 1 }}
+                exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
+                className="hero-text w-full md:w-5/12 text-left pointer-events-auto mt-20 md:mt-0"
+              >
+                <p className="text-emerald-400 font-mono tracking-wider text-sm mb-3 uppercase drop-shadow-[0_0_10px_rgba(52,211,153,0.3)]">
                 Full Stack Developer & AI Enthusiast
               </p>
               <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-white mb-6">
@@ -115,6 +118,7 @@ export function HeroSection() {
                 </button>
               </div>
             </motion.div>
+            </>
           ) : (
             <motion.div
               key="ai-widget"
