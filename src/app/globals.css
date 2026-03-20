@@ -3,21 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
-
-    --border: 240 3.7% 15.9%;
-  }
-}
-
-@layer base {
   * {
     @apply border-border;
     -webkit-tap-highlight-color: transparent;
@@ -42,6 +27,7 @@
 .gradient-text {
   background: linear-gradient(to right, #fff, #a1a1aa);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 

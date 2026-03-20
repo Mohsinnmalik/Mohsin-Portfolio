@@ -1,10 +1,10 @@
 .stb-text {
-  font-size: clamp(5rem, 15vw, 12rem);
+  font-size: clamp(3rem, 12vw, 12rem);
   font-weight: 900;
   line-height: 1;
   text-transform: uppercase;
   margin: 0;
-  padding: 0 2rem;
+  padding: 0 1.5rem;
   letter-spacing: -0.02em;
 }
 

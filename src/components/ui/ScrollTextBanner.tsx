@@ -12,9 +12,9 @@ export function ScrollTextBanner() {
     offset: ["start start", "end end"]
   });
 
-  // Travel range extended for mobile (huge ~15vw font needs more distance to clear screen)
-  const xTransform = useTransform(scrollYProgress, [0, 1], ["120vw", "-450vw"]);
-  const xTransformOpposite = useTransform(scrollYProgress, [0, 1], ["-450vw", "120vw"]);
+  // Travel range calculated to ensure long text clears screen even on small viewports
+  const xTransform = useTransform(scrollYProgress, [0, 1], ["100vw", "-600vw"]);
+  const xTransformOpposite = useTransform(scrollYProgress, [0, 1], ["-600vw", "100vw"]);
 
   return (
     <section
