@@ -20,6 +20,8 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
   }
   body {
     @apply bg-background text-foreground;
@@ -58,14 +60,22 @@
   background: #555;
 }
 
-/* Mobile Paint Optimization */  
-@media (max-width: 768px) {  
-  * {  
-    -webkit-font-smoothing: antialiased;  
-    -moz-osx-font-smoothing: grayscale;  
-  }  
-  .split-char, .split-word {  
-    will-change: opacity !important;  
-    transform: none !important;  
-  }  
-} 
+/* Mobile Paint Optimization */
+@media (max-width: 768px) {
+  * {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .split-char, .split-word {
+    will-change: opacity !important;
+    transform: none !important;
+  }
+}
+
+/* Safe area padding for notched devices */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+

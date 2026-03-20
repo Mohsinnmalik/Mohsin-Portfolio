@@ -8,24 +8,51 @@ import './ShowcaseSection.css';
 const SHOWCASE_DATA = [
     {
         id: "codeflux",
-        subheading: "EdTech Startup",
+        subheading: "EdTech Startup Platform",
         headline: "CODEFLUX",
-        image: "/images/showcase/codeflux.png",
-        description: "A comprehensive platform redesigning the educational experience through high-end interactive curriculum and AI-driven insights."
+        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200",
+        description: "Founded and built an AI-focused EdTech platform delivering real-world tech workshops, AI training sessions, and digital learning solutions. Designed full-stack SaaS architecture, managed deployments, and generated real revenue through tech initiatives.",
+        tech: ["Next.js", "Node.js", "MongoDB", "AI Tools", "Vercel"]
     },
     {
-        id: "vyapar-chat",
-        subheading: "AI for MSMEs",
-        headline: "VYAPAR-CHAT",
-        image: "/images/showcase/vyapar.png",
-        description: "Empowering small businesses with intelligent chat interfaces that automate sales, support, and business management workflows."
+        id: "docuflux",
+        subheading: "Health-Tech AI Platform",
+        headline: "DOCUFLUX",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200",
+        description: "Privacy-first health-tech platform converting doctor-patient conversations into real-time clinical records. Features AI transcription & zero-trust consent.",
+        tech: ["React", "Node.js", "AI APIs", "MongoDB"]
     },
     {
-        id: "dochub",
-        subheading: "Resource Platform",
-        headline: "ANJUMAN DOC HUB",
-        image: "/images/showcase/dochub.png",
-        description: "A sophisticated resource hub built for rapid knowledge dissemination and document lifecycle management at scale."
+        id: "resucrafty",
+        subheading: "AI Resume Builder",
+        headline: "RESUCRAFTY",
+        image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=1200",
+        description: "Built an interactive AI-powered resume builder that guides users step-by-step to create optimized resumes with ATS-friendly formatting. Designed conversational UI flow and intelligent content generation features.",
+        tech: ["Python", "AI APIs", "HTML", "CSS", "JS"]
+    },
+    {
+        id: "civicsaathi",
+        subheading: "AI Civic Reporting",
+        headline: "CIVICSAATHI",
+        image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1200",
+        description: "AI-powered civic reporting platform using Computer Vision to detect waste/potholes and automate structured reporting for municipalities.",
+        tech: ["MERN Stack", "Computer Vision"]
+    },
+    {
+        id: "collegedochub",
+        subheading: "Academic Automation",
+        headline: "COLLEGEDOCHUB",
+        image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
+        description: "AI-powered document automation for institutional templates. Uses OCR and Gemini API for error-free academic resource management.",
+        tech: ["Python", "OCR", "Gemini API", "React"]
+    },
+    {
+        id: "ai-calling-agent",
+        subheading: "AI Voice Automation",
+        headline: "AI CALLING AGENT",
+        image: "https://images.unsplash.com/photo-1589254065878-42c9da997008?auto=format&fit=crop&q=80&w=1200",
+        description: "Built an AI-powered voice assistant capable of automating conversational workflows such as business outreach and user interaction handling. Integrated speech processing and intelligent response generation.",
+        tech: ["Python", "AI APIs", "Voice APIs"]
     }
 ];
 
@@ -154,19 +181,45 @@ export const ShowcaseSection = () => {
                             </motion.h2>
                         </div>
 
+                        <div className="overflow-hidden mb-6">
+                            <motion.p
+                                key={`desc-${activeItem.id}`}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                                className="showcase-description"
+                            >
+                                {activeItem.description}
+                            </motion.p>
+                        </div>
+
+                        <div className="flex flex-wrap gap-2 mb-8">
+                            {activeItem.tech.map((tag, i) => (
+                                <motion.span
+                                    key={`${activeItem.id}-${tag}`}
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ duration: 0.3, delay: 0.3 + (i * 0.05) }}
+                                    className="showcase-tech-tag"
+                                >
+                                    {tag}
+                                </motion.span>
+                            ))}
+                        </div>
+
                         <div className="flex items-center gap-4">
                             <motion.button
                                 key={`cta-${activeItem.id}`}
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.4, delay: 0.3 }}
+                                transition={{ duration: 0.4, delay: 0.4 }}
                                 className="showcase-cta"
                             >
                                 View Project
                                 <ArrowRight size={16} />
                             </motion.button>
                             
-                            {/* Auto-play Visual Indicator (Progress bar could be added here later) */}
+                            {/* Auto-play Visual Indicator */}
                             {isAutoPlaying && (
                                 <motion.div 
                                     initial={{ opacity: 0 }}

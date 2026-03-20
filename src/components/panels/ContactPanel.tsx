@@ -1,114 +1,111 @@
 "use client";
 
-import { Mail, Github, Linkedin, Smartphone } from "lucide-react";
-import SplitText from "../reactbits/SplitText";
-import FadeContent from "../reactbits/FadeContent";
-import Image from "next/image";
+import { motion } from "framer-motion";
+import { Github, Linkedin, Mail, Phone, ExternalLink } from "lucide-react";
+
+const SOCIAL_LINKS = [
+  {
+    name: "LinkedIn",
+    icon: <Linkedin size={24} />,
+    url: "https://www.linkedin.com/in/mohsin-malik-0382b629b",
+    color: "#0077B5",
+    label: "/in/mohsin-malik"
+  },
+  {
+    name: "GitHub",
+    icon: <Github size={24} />,
+    url: "https://github.com/Mohsinnmalik",
+    color: "#333",
+    label: "@Mohsinnmalik"
+  },
+  {
+    name: "Email",
+    icon: <Mail size={24} />,
+    url: "mailto:mohsinmalik1511@gmail.com",
+    color: "#EA4335",
+    label: "mohsinmalik1511@gmail.com"
+  },
+  {
+    name: "Call Me",
+    icon: <Phone size={24} />,
+    url: "tel:+919325808063",
+    color: "#34A853",
+    label: "+91 9325808063"
+  }
+];
 
 export function ContactPanel() {
   return (
-    <section id="contact" className="py-24 bg-[#0a0f1d] text-slate-300 relative overflow-hidden z-20">
-      <div className="container mx-auto px-6 md:px-12 max-w-7xl">
-        
-        <div className="flex flex-col lg:flex-row items-center gap-16">
-          
-          {/* Left: Image & Socials */}
-          {/* Left: Image & Socials */}
-          <FadeContent 
-            blur={true} 
-            duration={1.2} 
-            ease="power2.out" 
-            initialOpacity={0}
-            className="w-full lg:w-5/12 flex flex-col justify-center items-center lg:items-start"
+    <section id="contact" className="relative py-24 bg-black overflow-hidden border-t border-white/5">
+      {/* Background decoration */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
           >
-            <div className="text-center lg:text-left mb-10 w-full">
-              <SplitText
-                text="Get In Touch"
-                className="text-3xl md:text-5xl font-bold text-white mb-4"
-                delay={30}
-                duration={1}
-                ease="power2.out"
-              />
-              <p className="text-slate-400">Let&apos;s discuss your next project or system architecture.</p>
-            </div>
+            <h2 className="text-4xl md:text-7xl font-bold text-white mb-8 tracking-tighter">
+              Let&apos;s Build Something <span className="text-orange-500">Incredible.</span>
+            </h2>
+            <p className="text-slate-400 text-lg md:text-xl mb-16 max-w-2xl mx-auto leading-relaxed">
+              Whether you have a specific AI integration challenge or a large-scale web project, 
+              I&apos;m ready to turn your vision into a production-ready reality.
+            </p>
+          </motion.div>
 
-            {/* The 3D Avatar Image with background-removal via mix-blend-lighten */}
-            <div className="relative w-full aspect-[4/5] max-w-lg overflow-hidden flex items-center justify-center mb-10">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-transparent mix-blend-overlay rounded-full blur-3xl opacity-50 z-0"></div>
-              {/* Note: mix-blend-lighten heavily reduces the dark background to transparent against our dark-navy site background. */}
-              <Image 
-                src="/images/contact-avatar.jpg" 
-                alt="Get In Touch"
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover mix-blend-lighten filter brightness-110 contrast-125 select-none z-10"
-                style={{
-                  maskImage: "radial-gradient(ellipse at center, black 65%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse at center, black 65%, transparent 100%)",
-                }}
-              />
-            </div>
-
-            <div className="flex gap-4">
-              <a href="#" className="w-12 h-12 rounded-full bg-[#0f1525] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 transition-colors">
-                <Github size={20} />
-              </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#0f1525] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 transition-colors">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#0f1525] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 transition-colors">
-                <Mail size={20} />
-              </a>
-              <a href="#" className="w-12 h-12 rounded-full bg-[#0f1525] border border-slate-800 flex items-center justify-center text-slate-400 hover:text-orange-500 hover:border-orange-500 transition-colors">
-                <Smartphone size={20} />
-              </a>
-            </div>
-          </FadeContent>
-
-          {/* Right: Contact Form */}
-          <FadeContent 
-            blur={true} 
-            duration={1.2} 
-            ease="power2.out" 
-            initialOpacity={0}
-            delay={200}
-            className="w-full lg:w-7/12"
-          >
-            <div className="bg-[#0f1525] p-8 md:p-12 rounded-3xl border border-slate-800 shadow-xl">
-              <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-slate-400 text-sm mb-2 ml-1">First Name</label>
-                    <input type="text" className="w-full bg-[#1a2336] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" placeholder="John" />
-                  </div>
-                  <div>
-                    <label className="block text-slate-400 text-sm mb-2 ml-1">Last Name</label>
-                    <input type="text" className="w-full bg-[#1a2336] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" placeholder="Doe" />
-                  </div>
+          {/* Social Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24">
+            {SOCIAL_LINKS.map((link, i) => (
+              <motion.a
+                key={link.name}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                whileHover={{ y: -5 }}
+                className="group relative p-8 rounded-3xl bg-white/5 border border-white/10 flex flex-col items-center text-center transition-all hover:bg-white/10 hover:border-white/20"
+              >
+                <div 
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all group-hover:scale-110 group-hover:rotate-3 shadow-lg"
+                  style={{ backgroundColor: `${link.color}20`, color: link.color }}
+                >
+                  {link.icon}
                 </div>
+                <h3 className="text-white font-bold mb-2">{link.name}</h3>
+                <span className="text-slate-500 text-xs font-mono">{link.label}</span>
                 
-                <div>
-                  <label className="block text-slate-400 text-sm mb-2 ml-1">Email Address</label>
-                  <input type="email" className="w-full bg-[#1a2336] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors" placeholder="john@example.com" />
+                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ExternalLink size={14} className="text-white/40" />
                 </div>
+              </motion.a>
+            ))}
+          </div>
 
-                <div>
-                  <label className="block text-slate-400 text-sm mb-2 ml-1">Your Message</label>
-                  <textarea rows={5} className="w-full bg-[#1a2336] border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors resize-none" placeholder="Let's build something amazing..."></textarea>
-                </div>
-
-                <button className="w-full py-4 mt-2 bg-orange-500 text-white rounded-xl font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-                  Send Message
-                </button>
-              </form>
+          {/* Footer Bottom */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row items-center justify-between pt-12 border-t border-white/10 gap-8"
+          >
+            <div className="flex flex-col items-center md:items-start gap-2">
+               <span className="text-white font-bold text-xl tracking-tighter">MOHSIN MALIK</span>
+               <p className="text-slate-500 text-[10px] uppercase tracking-[0.4em]">Full Stack AI Product Builder</p>
             </div>
-          </FadeContent>
+            
+            <div className="text-slate-600 text-[10px] font-mono uppercase tracking-widest text-center md:text-right">
+              &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED • BUILT BY CREATION DAY 1
+            </div>
+          </motion.div>
         </div>
-      </div>
-      
-      {/* Footer */}
-      <div className="mt-32 border-t border-slate-800 pt-8 pb-12 w-full text-center">
-        <p className="text-slate-500 text-sm">© 2026 Mohsin Malik | Systems & Software Engineer. All rights reserved.</p>
       </div>
     </section>
   );

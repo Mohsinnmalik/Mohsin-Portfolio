@@ -6,48 +6,138 @@ import './ExperienceTimeline.css';
 
 const TIMELINE_DATA = [
     {
-        id: "codeflux",
-        date: "2024 - Present",
-        title: "Technical Head & Founder",
-        desc: "Leading CodeFlux, building AI curriculums, and organizing youth-led tech workshops to empower the next generation of developers.",
+        id: "codesoft-web",
+        date: "2023",
+        title: "Web Development Intern",
+        desc: "Completed intensive internship at CodeSoft focused on frontend development, responsive UI design, and real-world website deployment practices using modern web standards.",
         images: [
-            "/images/showcase/codeflux.png",
-            "/images/showcase/vyapar.png",
-            "/images/showcase/dochub.png"
+            "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1547658719-da2b51169166?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=800"
         ],
         annotations: [
-            { text: "Built AI curriculum", x: -90, y: -200, rotate: -5 },
-            { text: "500+ students empowered", x: 130, y: 170, rotate: 6 }
+            { text: "First professional code", x: -100, y: -180, rotate: -5 },
+            { text: "Responsive UI master", x: 120, y: 160, rotate: 4 }
         ]
     },
     {
-        id: "hackathon",
-        date: "Feb 2026",
-        title: "AI/ML Hackathon Participant",
-        desc: "Participated in the Widesoftech hackathon, building scalable backend architectures and integrating real-time AI processing units.",
+        id: "codesoft-ds",
+        date: "2023",
+        title: "Data Science Intern",
+        desc: "Executed data analysis projects during fellowship at CodeSoft, exploring machine learning fundamentals and building basic predictive models using Python and statistical libraries.",
         images: [
-            "/images/showcase/vyapar.png",
-            "/images/showcase/dochub.png",
-            "/images/showcase/codeflux.png"
+            "https://images.unsplash.com/photo-1551288049-bbda38a10ad5?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800"
         ],
         annotations: [
-            { text: "Real-time AI inference", x: -130, y: 150, rotate: -3 },
-            { text: "Scalable architecture", x: 110, y: -210, rotate: 8 }
+            { text: "Python & Pandas fun", x: -130, y: 140, rotate: -8 },
+            { text: "Modeling real data", x: 100, y: -200, rotate: 6 }
         ]
     },
     {
-        id: "eduexpo",
-        date: "Dec 2025",
+        id: "prodigy-web",
+        date: "2024",
+        title: "Web Development Intern",
+        desc: "Developed modern web interfaces at Prodigy Infotech, significantly improving full-stack workflow understanding, including API integration, server-side logic, and scalable deployments.",
+        images: [
+            "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "Full stack jump", x: -90, y: -160, rotate: -3 },
+            { text: "API integrations refined", x: 140, y: 180, rotate: 7 }
+        ]
+    },
+    {
+        id: "game-research",
+        date: "2024",
+        title: "Business Research Intern",
+        desc: "Collaborated with Global Alliance for Mass Entrepreneurship (GAME) to conduct market research and analyze startup ecosystems, contributing key insights on scalable business strategies.",
+        images: [
+            "https://images.unsplash.com/photo-1553484771-047a44eee27b?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1461280360983-bd93eaa50516?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "Startup ecosystems", x: -150, y: 120, rotate: -6 },
+            { text: "Impactful research", x: 110, y: -190, rotate: 5 }
+        ]
+    },
+    {
+        id: "codeflux-founder",
+        date: "2025",
+        title: "Founder & Full Stack Developer",
+        desc: "Founded CodeFlux, a student-driven EdTech initiative focused on delivering AI workshops, intensive tech training programs, and hands-on product development experiences for the youth.",
+        images: [
+            "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "Born to Build", x: -120, y: -200, rotate: -4 },
+            { text: "Empowering techies", x: 130, y: 150, rotate: 6 }
+        ]
+    },
+    {
+        id: "ai-workshop",
+        date: "2025",
+        title: "National AI Workshop Presenter",
+        desc: "Led nationwide sessions via the CodeFlux Initiative, introducing educators and students to advanced AI productivity tools and modern technology adoption strategies.",
+        images: [
+            "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1535223289827-42f1e9919769?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "AI is the Future", x: -140, y: 160, rotate: -7 },
+            { text: "Nationwide Impact", x: 100, y: -220, rotate: 8 }
+        ]
+    },
+    {
+        id: "robotics-iitb",
+        date: "2025",
+        title: "Robotics Workshop Organizer",
+        desc: "Coordinated technology awareness sessions and hands-on robotics workshops in collaboration with IIT Bombay, promoting engineering innovation among aspiring students.",
+        images: [
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1561557944-6eda78622880?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1531746790731-6c087fecd05a?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "Collaborated with IITB", x: -110, y: -150, rotate: -5 },
+            { text: "Robotics & Innovation", x: 120, y: 190, rotate: 4 }
+        ]
+    },
+    {
+        id: "eduexpo-pitch",
+        date: "2025",
         title: "EduExpo Presenter",
-        desc: "Pitched AI automation tools for educators and secured sponsorships from major tech firms to expand our educational outreach.",
+        desc: "Pitched AI automation solutions designed for the education sector at institutional tech events, successfully securing sponsorship interest and resource partnerships.",
         images: [
-            "/images/showcase/dochub.png",
-            "/images/showcase/codeflux.png",
-            "/images/showcase/vyapar.png"
+            "https://images.unsplash.com/photo-1475721027785-f74dea327912?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=800"
         ],
         annotations: [
-            { text: "Pitched to tech titans", x: -140, y: -170, rotate: -7 },
-            { text: "Secured sponsorships", x: 120, y: 180, rotate: 5 }
+            { text: "The Big Pitch", x: -130, y: 170, rotate: -6 },
+            { text: "Secured Sponsorship", x: 140, y: -210, rotate: 7 }
+        ]
+    },
+    {
+        id: "independent-projects",
+        date: "2026",
+        title: "Full Stack & AI Product Builder",
+        desc: "Developing multiple AI-integrated web platforms independently, including sophisticated document automation systems, civic-tech solutions, and next-gen productivity tools.",
+        images: [
+            "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1558494949-ef010cbdcc48?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&q=80&w=800"
+        ],
+        annotations: [
+            { text: "Obsessed with Creation", x: -120, y: -190, rotate: -4 },
+            { text: "AI-Integrated Apps", x: 110, y: 150, rotate: 5 }
         ]
     }
 ];

@@ -22,7 +22,7 @@ export function Model(props: any) {
     holdTimer.current = setTimeout(() => {
       setIsHolding(false);
       setAiMode(true);
-    }, 5000);
+    }, 3000);
   };
 
   const handlePointerUp = (e: any) => {

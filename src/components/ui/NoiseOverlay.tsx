@@ -1,8 +1,10 @@
+'use client';
+
 import React from 'react';
 
 export function NoiseOverlay() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-30 mix-blend-overlay">
+    <div className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-30 mix-blend-overlay" suppressHydrationWarning aria-hidden="true">
       <svg
         className="absolute inset-0 h-full w-full opacity-40"
         xmlns="http://www.w3.org/2000/svg"

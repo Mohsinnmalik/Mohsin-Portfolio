@@ -26,6 +26,7 @@ export function AboutPanel() {
       id="about" 
       className="py-24 bg-[#0B1121] text-slate-300 relative overflow-hidden z-20"
       ref={containerRef}
+      style={{ position: 'relative' }}
     >
       <div className="container mx-auto px-6 md:px-12 max-w-7xl">
         {/* Header */}
@@ -39,16 +40,16 @@ export function AboutPanel() {
           />
         </div>
 
-        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20 overflow-hidden px-4 md:px-0">
+        <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20 overflow-x-hidden px-4 md:px-0">
           
           <motion.div 
             style={{ x: xTransformLeft, opacity: opacityTransform }}
-            className="w-full md:w-1/2 flex justify-center mt-10 md:mt-0 relative h-[450px] lg:h-[540px]"
+            className="w-full md:w-1/2 flex justify-center mt-0 md:mt-0 relative h-[420px] md:h-[450px] lg:h-[540px]"
           >
             <ProfileCard
               name="Mohsin Malik"
-              title="AI Engineer"
-              handle="mohsinmalik"
+              title="Full Stack Engineer"
+              handle="mohsinnmalik"
               status="Online"
               contactText="Hire Me"
               avatarUrl="/images/about-avatar.jpg"
@@ -71,26 +72,40 @@ export function AboutPanel() {
             className="w-full md:w-1/2"
           >
             <p className="text-lg md:text-xl text-slate-400 leading-relaxed mb-8">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores suscipit expedita blanditiis temporibus nostrum nulla fugit consequuntur! Ullam earum perspiciatis sit ea, asperiores dolorum illum temporibus quidem? Iusto, officia mollitia!
+              Hi, I&apos;m <span className="text-white font-bold">Mohsin Malik</span>. 
+              I don&apos;t just build products; I build digital experiences that matter. 
+              My obsession with creation began with a simple question: 
+              <span className="italic text-slate-300"> &quot;How can I make this more impactful?&quot;</span> 
+              Today, as the <span className="text-orange-400 font-bold">Co-Founder of CodeFlux</span>, 
+              I focus on turning complex ideas into intelligent, production-ready web platforms 
+              that solve real problems for real people. 
+              For me, technology is about more than code—it&apos;s about 
+              <span className="text-slate-200"> growth through execution</span> and constant innovation.
             </p>
 
-            <div className="grid grid-cols-3 gap-6 mb-10">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
               <div className="text-center md:text-left">
                 <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">5+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Education</p>
+                <p className="text-slate-400 text-sm uppercase tracking-wider">Production<br/>Projects</p>
               </div>
               <div className="text-center md:text-left">
-                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">10+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Years Experience</p>
+                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">7+</h4>
+                <p className="text-slate-400 text-sm uppercase tracking-wider">Tech Workshops<br/>Conducted</p>
               </div>
               <div className="text-center md:text-left">
-                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">100+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Projects Completed</p>
+                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">15K+</h4>
+                <p className="text-slate-400 text-sm uppercase tracking-wider">Revenue<br/>Generated</p>
               </div>
             </div>
 
-            <button className="px-8 py-4 rounded-full border border-orange-500/50 text-white font-medium hover:bg-orange-500 transition-colors duration-300 w-fit shrink-0">
-              Learn More
+            <button 
+              onClick={() => {
+                const contact = document.getElementById("contact");
+                if (contact) contact.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="px-8 py-4 rounded-full border border-orange-500/50 text-white font-medium hover:bg-orange-500 transition-colors duration-300 w-fit shrink-0"
+            >
+              Contact Me
             </button>
           </motion.div>
         </div>

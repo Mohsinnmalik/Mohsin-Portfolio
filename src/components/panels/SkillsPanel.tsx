@@ -4,13 +4,49 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 const skills = [
-  { name: "React / Next.js", level: "95%" },
-  { name: "Node.js & TypeScript", level: "90%" },
-  { name: "Python / FastAPI", level: "85%" },
-  { name: "Tailwind CSS", level: "95%" },
-  { name: "Machine Learning (LLMs)", level: "80%" },
-  { name: "Cloud / DevOps", level: "75%" }
+  { name: "React / Next.js", level: "88%" },
+  { name: "Node.js / Express", level: "82%" },
+  { name: "JavaScript (Core)", level: "85%" },
+  { name: "Python (AI / Automation / Backend)", level: "78%" },
+  { name: "AI / ML Integration (LLMs, APIs, Automation)", level: "80%" },
+  { name: "MongoDB / Database Design", level: "76%" }
 ];
+
+// Horizontal scrolling logos component
+function TechLogoCarousel() {
+  const logos = [
+    "React", "Next.js", "Node.js", "Express", "JavaScript", "Python", 
+    "PyTorch", "OpenAI", "MongoDB", "PostgreSQL", "TailwindCSS", "TypeScript",
+    "Framer Motion", "GSAP", "Docker", "AWS", "GitHub", "Vercel"
+  ];
+  
+  // Double the logos for seamless loop
+  const duplicatedLogos = [...logos, ...logos];
+
+  return (
+    <div className="mt-20 w-full overflow-hidden relative py-10 opacity-40 hover:opacity-100 transition-opacity duration-500">
+      {/* Gradient masks for smooth edges */}
+      <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-[#0a0f1d] to-transparent z-10" />
+      <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#0a0f1d] to-transparent z-10" />
+      
+      <motion.div 
+        className="flex gap-16 items-center w-max"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ 
+          duration: 30, 
+          repeat: Infinity, 
+          ease: "linear" 
+        }}
+      >
+        {duplicatedLogos.map((logo, i) => (
+          <div key={i} className="text-xl md:text-2xl font-black tracking-tighter text-white/20 hover:text-orange-500/80 transition-colors whitespace-nowrap cursor-default uppercase">
+            {logo}
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 export function SkillsPanel() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,6 +78,7 @@ export function SkillsPanel() {
       id="skills" 
       ref={containerRef}
       className="relative z-20 h-[300vh] bg-[#0a0f1d]"
+      style={{ position: 'relative' }}
     >
       {/* Sticky Camera Viewport */}
       <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#0a0f1d] flex items-center justify-center">
@@ -108,6 +145,9 @@ export function SkillsPanel() {
               );
             })}
           </div>
+
+          {/* Tech Stack Logo Carousel — Moving horizontally below the grid */}
+          <TechLogoCarousel />
         </motion.div>
 
       </div>
