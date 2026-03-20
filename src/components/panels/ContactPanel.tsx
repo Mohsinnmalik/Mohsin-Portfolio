@@ -102,7 +102,7 @@ export function ContactPanel() {
             </div>
             
             <div className="text-slate-600 text-[10px] font-mono uppercase tracking-widest text-center md:text-right">
-              &copy; {new Date().getFullYear()} ALL RIGHTS RESERVED • BUILT BY CREATION DAY 1
+              &copy; <span suppressHydrationWarning>{new Date().getFullYear()}</span> ALL RIGHTS RESERVED • BUILT BY CREATION DAY 1
             </div>
           </motion.div>
         </div>

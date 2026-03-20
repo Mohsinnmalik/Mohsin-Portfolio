@@ -11,6 +11,7 @@ import {
 } from 'framer-motion';
 import { ArrowRight, Github } from 'lucide-react';
 import RippleImageReveal from '../ui/RippleImageReveal';
+import { ClientOnly } from '../ui/ClientOnly';
 
 interface Project {
   id: string;
@@ -170,10 +171,12 @@ export function ProjectStory() {
         >
           {/* BACKGROUND: The powerful Ripple WebGL component */}
           <div className="absolute inset-0 z-0 opacity-40 md:opacity-50">
-            <RippleImageReveal 
-              activeImage={activeItem.image} 
-              onNext={() => {}} // Disabled click-to-next as scroll controls it
-            />
+            <ClientOnly>
+              <RippleImageReveal 
+                activeImage={activeItem.image} 
+                onNext={() => {}} // Disabled click-to-next as scroll controls it
+              />
+            </ClientOnly>
           </div>
 
           {/* VIGNETTE for readability */}

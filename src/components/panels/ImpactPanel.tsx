@@ -32,9 +32,9 @@ export function ImpactPanel() {
         </div>
         
         <div className="mt-12 pt-8 border-t border-white/5">
-          <p className="text-sm text-neutral-400 italic font-light leading-relaxed">
+          <div className="text-sm text-neutral-400 italic font-light leading-relaxed">
             &quot;The hallmark of a great AI engineer isn&apos;t just knowing the latest models, but knowing how to architect a system where AI provides concrete ROI without breaking the bank on compute.&quot;
-          </p>
+          </div>
         </div>
       </motion.div>
     </section>

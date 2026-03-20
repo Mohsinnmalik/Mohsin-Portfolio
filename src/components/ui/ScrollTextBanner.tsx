@@ -13,8 +13,8 @@ export function ScrollTextBanner() {
   });
 
   // Travel range calculated to ensure long text clears screen even on small viewports
-  const xTransform = useTransform(scrollYProgress, [0, 1], ["100vw", "-600vw"]);
-  const xTransformOpposite = useTransform(scrollYProgress, [0, 1], ["-600vw", "100vw"]);
+  const xTransform = useTransform(scrollYProgress, [0, 1], ["100vw", "-1000vw"]);
+  const xTransformOpposite = useTransform(scrollYProgress, [0, 1], ["-1000vw", "100vw"]);
 
   return (
     <section
@@ -23,6 +23,7 @@ export function ScrollTextBanner() {
       // because the massive font travels slowly per px of scroll
       className="relative z-20 h-[500vh] sm:h-[300vh] bg-[#0a0f1d]"
       style={{ position: 'relative' }}
+      suppressHydrationWarning
     >
       <div className="sticky top-0 h-screen w-full flex flex-col justify-center gap-8 overflow-hidden border-y border-white/5 bg-[#0a0f1d]">
 
@@ -34,9 +35,17 @@ export function ScrollTextBanner() {
           <h2 className="stb-text stb-stroke">
             I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
           </h2>
+          <span className="stb-separator" />
+          <h2 className="stb-text stb-stroke">
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+          </h2>
         </motion.div>
 
         <motion.div style={{ x: xTransform }} className="whitespace-nowrap flex w-max">
+          <h2 className="stb-text stb-fill text-orange-500">
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+          </h2>
+          <span className="stb-separator bg-orange-500" />
           <h2 className="stb-text stb-fill text-orange-500">
             I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
           </h2>

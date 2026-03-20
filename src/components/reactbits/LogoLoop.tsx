@@ -1,5 +1,6 @@
 "use client";
 import React, { useRef, useEffect } from 'react';
+import Image from 'next/image';
 import './LogoLoop.css';
 
 const LogoLoop = ({
@@ -121,7 +122,14 @@ const LogoLoop = ({
             {item.custom ? (
               item.custom
             ) : item.image ? (
-              <img src={item.url || item.image} alt={item.name} style={{ height: '100%', objectFit: 'contain' }} />
+              <Image 
+                src={item.url || item.image} 
+                alt={item.name} 
+                width={200}
+                height={100}
+                unoptimized
+                style={{ height: '100%', width: 'auto', objectFit: 'contain' }} 
+              />
             ) : item.icon ? (
               item.icon
             ) : (
@@ -145,7 +153,14 @@ const LogoLoop = ({
             {item.custom ? (
               item.custom
             ) : item.image ? (
-              <img src={item.url || item.image} alt={item.name} style={{ height: '100%', objectFit: 'contain' }} />
+              <Image 
+                src={item.url || item.image} 
+                alt={item.name} 
+                width={200}
+                height={100}
+                unoptimized
+                style={{ height: '100%', width: 'auto', objectFit: 'contain' }} 
+              />
             ) : item.icon ? (
               item.icon
             ) : (

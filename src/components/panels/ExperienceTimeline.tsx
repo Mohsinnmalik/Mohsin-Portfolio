@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import './ExperienceTimeline.css';
 
 const TIMELINE_DATA = [
@@ -226,7 +227,7 @@ export const ExperienceTimeline = () => {
                             >
                                 <span className="timeline-date">{activeItem.date}</span>
                                 <h1 className="timeline-title">{activeItem.title}</h1>
-                                <p className="timeline-desc">{activeItem.desc}</p>
+                                <div className="timeline-desc">{activeItem.desc}</div>
                             </motion.div>
                         </AnimatePresence>
                     </div>
@@ -256,7 +257,7 @@ export const ExperienceTimeline = () => {
                                             height: '380px'
                                         }}
                                     >
-                                        <img src={img} alt={activeItem.title} className="polaroid-img" />
+                                        <Image src={img} alt={activeItem.title} width={800} height={1000} className="polaroid-img" />
                                     </motion.div>
                                 ))}
                             </AnimatePresence>

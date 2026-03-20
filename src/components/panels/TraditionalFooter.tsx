@@ -33,9 +33,9 @@ export function TraditionalFooter() {
           <span className="text-xl font-bold tracking-tighter text-white">
             MOHSIN<span className="text-orange-500">.MALIK</span>
           </span>
-          <p className="text-xs text-slate-500 font-mono uppercase tracking-widest">
+          <div className="text-xs text-slate-500 font-mono uppercase tracking-widest">
             Full Stack & AI Engineer
-          </p>
+          </div>
         </div>
 
         <div className="flex items-center gap-6">
@@ -54,9 +54,9 @@ export function TraditionalFooter() {
         </div>
 
         <div className="text-center md:text-right">
-          <p className="text-xs text-slate-500 font-mono uppercase tracking-widest">
+          <div className="text-xs text-slate-500 font-mono uppercase tracking-widest">
             Built and Created by Mohsin Malik
-          </p>
+          </div>
         </div>
       </div>
     </footer>

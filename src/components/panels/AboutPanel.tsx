@@ -71,30 +71,30 @@ export function AboutPanel() {
             style={{ x: xTransformRight, opacity: opacityTransform }}
             className="w-full md:w-1/2"
           >
-            <p className="text-lg md:text-xl text-slate-400 leading-relaxed mb-8">
+            <div className="text-lg md:text-xl text-slate-400 leading-relaxed mb-8">
               Hi, I&apos;m <span className="text-white font-bold">Mohsin Malik</span>. 
               I don&apos;t just build products; I build digital experiences that matter. 
               My obsession with creation began with a simple question: 
-              <span className="italic text-slate-300"> &quot;How can I make this more impactful?&quot;</span> 
+              <span className="italic text-slate-300">&quot;How can I make this more impactful?&quot;</span> 
               Today, as the <span className="text-orange-400 font-bold">Co-Founder of CodeFlux</span>, 
               I focus on turning complex ideas into intelligent, production-ready web platforms 
               that solve real problems for real people. 
               For me, technology is about more than code—it&apos;s about 
-              <span className="text-slate-200"> growth through execution</span> and constant innovation.
-            </p>
+              <span className="text-slate-200">growth through execution</span> and constant innovation.
+            </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
               <div className="text-center md:text-left">
-                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">5+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Production<br/>Projects</p>
+                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2"><span>5+</span></h4>
+                <div className="text-slate-400 text-sm uppercase tracking-wider"><span>Production<br/>Projects</span></div>
               </div>
               <div className="text-center md:text-left">
-                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">7+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Tech Workshops<br/>Conducted</p>
+                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2"><span>7+</span></h4>
+                <div className="text-slate-400 text-sm uppercase tracking-wider"><span>Tech Workshops<br/>Conducted</span></div>
               </div>
               <div className="text-center md:text-left">
-                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2">15K+</h4>
-                <p className="text-slate-400 text-sm uppercase tracking-wider">Revenue<br/>Generated</p>
+                <h4 className="text-4xl lg:text-5xl font-bold text-orange-500 mb-2"><span>15K+</span></h4>
+                <div className="text-slate-400 text-sm uppercase tracking-wider"><span>Revenue<br/>Generated</span></div>
               </div>
             </div>
 

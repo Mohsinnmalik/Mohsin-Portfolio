@@ -113,7 +113,7 @@ export function SkillsPanel() {
         >
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">My Skills</h2>
-            <p className="text-slate-400">Technologies and tools I work with to build scalable systems.</p>
+            <div className="text-slate-400">Technologies and tools I work with to build scalable systems.</div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

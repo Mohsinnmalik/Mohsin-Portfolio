@@ -7,8 +7,8 @@
     "id": "..\\node_modules\\@react-three\\drei\\web\\FaceLandmarker.js -> @mediapipe/tasks-vision",
     "files": []
   },
-  "app\\page.tsx -> @/components/reactbits/TargetCursor": {
-    "id": "app\\page.tsx -> @/components/reactbits/TargetCursor",
+  "components\\MainApp.tsx -> @/components/reactbits/TargetCursor": {
+    "id": "components\\MainApp.tsx -> @/components/reactbits/TargetCursor",
     "files": [
       "static/css/_app-pages-browser_src_components_reactbits_TargetCursor_tsx.css",
       "static/chunks/_app-pages-browser_src_components_reactbits_TargetCursor_tsx.js"

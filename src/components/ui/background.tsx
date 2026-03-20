@@ -3,6 +3,7 @@
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { ClientOnly } from "./ClientOnly";
 
 function Particles() {
   const count = 2000;
@@ -61,13 +62,14 @@ function Particles() {
 
 export function Background() {
   return (
-    <div className="absolute inset-0 z-0 bg-black pointer-events-none">
-      <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-        <fog attach="fog" args={["black", 2, 7]} />
-        <Particles />
-      </Canvas>
-      {/* Subtle overlay gradient to blend with the hero content */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black z-10 pointer-events-none" />
-    </div>
+    <ClientOnly>
+      <div className="absolute inset-0 z-0 bg-black pointer-events-none">
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+          <fog attach="fog" args={["black", 2, 7]} />
+          <Particles />
+        </Canvas>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/50 to-black z-10 pointer-events-none" />
+      </div>
+    </ClientOnly>
   );
 }

@@ -9,6 +9,7 @@ import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion"
 import { AIVoiceWidget } from "@/components/ui/AIVoiceWidget";
 import { DoodleHint } from "@/components/ui/DoodleHint";
 import { ResumeModal } from "@/components/ui/ResumeModal";
+import { ClientOnly } from "@/components/ui/ClientOnly";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -109,12 +110,12 @@ export function HeroSection() {
 
       {/* HTML UI Layer */}
       {/* Container is pointer-events-none so we don't block 3D interactions */}
-      <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center justify-center md:justify-end pb-24 md:pb-0 pointer-events-none">
+      <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center justify-center md:justify-end pb-24 md:pb-0 pointer-events-none" suppressHydrationWarning>
         
         <AnimatePresence mode="wait">
           {!isMounted || !aiMode ? (
             /* Right-aligned text block that fades in late in the scroll */
-            <>
+            <motion.div key="hero-ui-main" className="contents">
               <DoodleHint key="doodle-hint" />
               <motion.div 
                 key="hero-text"
@@ -122,37 +123,37 @@ export function HeroSection() {
                 exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
                 className="hero-text w-full md:w-6/12 text-center md:text-left pointer-events-auto"
               >
-                <p className="text-orange-500 font-mono tracking-[0.2em] text-[10px] md:text-xs mb-4 uppercase font-bold drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">
-                  FULL STACK ENGINEER • AI PRODUCT BUILDER • STARTUP FOUNDER
-                </p>
+                <div className="text-orange-500 font-mono tracking-[0.2em] text-[10px] md:text-xs mb-4 uppercase font-bold drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">
+                  <span>FULL STACK ENGINEER • AI PRODUCT BUILDER • STARTUP FOUNDER</span>
+                </div>
                 
                 <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-4">
-                  Mohsin Malik
+                  <span>Mohsin Malik</span>
                 </h1>
                 
                 <h2 className="text-xl md:text-3xl font-medium text-slate-200 mb-6 flex flex-col md:flex-row md:items-center gap-2">
                   <span>Hi, I&apos;m Mohsin Malik.</span>
-                  <span className="text-slate-400">I build real-world web products.</span>
+                  <span className="text-slate-400"><span>I build real-world web products.</span></span>
                 </h2>
                 
-                <p className="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-lg mb-8">
-                  Full Stack Developer focused on building <span className="text-slate-200">scalable SaaS platforms</span>, 
-                  <span className="text-slate-200"> AI-integrated applications</span>, and <span className="text-slate-200">high-performance web systems</span>. 
-                  I turn ideas into production-ready products used by real users.
-                </p>
+                <div className="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-lg mb-8">
+                  <span>Full Stack Developer focused on building <span className="text-slate-200"><span>scalable SaaS platforms</span></span>, 
+                  <span className="text-slate-200"><span> AI-integrated applications</span></span>, and <span className="text-slate-200"><span>high-performance web systems</span></span>. 
+                  I turn ideas into production-ready products used by real users.</span>
+                </div>
                 
                 <div className="flex flex-wrap gap-4 mb-10 justify-center md:justify-start">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Built 5+ production web apps
+                    <span>Built 5+ production web apps</span>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    Conducted nationwide AI workshops
+                    <span>Conducted nationwide AI workshops</span>
                   </div>
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                    Founder @ CodeFlux
+                    <span>Founder @ CodeFlux</span>
                   </div>
                 </div>
 
@@ -164,7 +165,7 @@ export function HeroSection() {
                     }}
                     className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm tracking-wide hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-[0_0_20px_rgba(249,115,22,0.25)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 relative overflow-hidden group">
                     <span className="relative z-10">View Projects</span>
-                    <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <span className="absolute inset-0 h-full w-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
                   </button>
                   <button 
                     onClick={() => setIsResumeOpen(true)}
@@ -174,7 +175,7 @@ export function HeroSection() {
                   </button>
                 </div>
             </motion.div>
-            </>
+            </motion.div>
           ) : (
             <motion.div
               key="ai-widget"
@@ -185,7 +186,9 @@ export function HeroSection() {
               className="w-full md:w-5/12 pointer-events-auto flex justify-end"
             >
               {/* Force show AIVoiceWidget and bypass its own animation state wrapper to rely on Framer Motion here */}
-              <AIVoiceWidget forceShow={true} />
+              <ClientOnly>
+                <AIVoiceWidget forceShow={true} />
+              </ClientOnly>
             </motion.div>
           )}
         </AnimatePresence>
@@ -198,14 +201,12 @@ export function HeroSection() {
       {/* Scroll indicator - fades out on scroll dynamically, and hidden on aiMode */}
       <AnimatePresence>
         {(!isMounted || !aiMode) && (
-          <motion.div 
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-xs font-mono tracking-widest uppercase flex flex-col items-center gap-3 animate-pulse"
-          >
-            <span>Scroll</span>
-            <div className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
-          </motion.div>
+            <div className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-xs font-mono tracking-widest uppercase flex flex-col items-center gap-3 animate-pulse">
+              <span className="flex flex-col items-center gap-3">
+                <span><span>Scroll</span></span>
+                <span className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
+              </span>
+            </div>
         )}
       </AnimatePresence>
       <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />

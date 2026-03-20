@@ -182,7 +182,7 @@ export const ShowcaseSection = () => {
                         </div>
 
                         <div className="overflow-hidden mb-6">
-                            <motion.p
+                            <motion.div
                                 key={`desc-${activeItem.id}`}
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -190,7 +190,7 @@ export const ShowcaseSection = () => {
                                 className="showcase-description"
                             >
                                 {activeItem.description}
-                            </motion.p>
+                            </motion.div>
                         </div>
 
                         <div className="flex flex-wrap gap-2 mb-8">

@@ -3,7 +3,7 @@
 import { useUIStore } from "@/store/useUIStore";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, X, Terminal, Activity } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 
 export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
   const globalAiMode = useUIStore((state) => state.aiMode);
@@ -30,23 +30,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     }
   }, [history, aiResponse]);
 
-  // Initial Intro Logic
-  useEffect(() => {
-    if (aiMode && history.length === 0) {
-      const introText = "Hi, this is Mohsin’s AI assistant. He builds intelligent web products that solve real-world problems. His work combines modern full-stack engineering with applied AI. You can explore his projects, journey, and technical initiatives here.";
-      
-      // Artificial delay for cinematic feel
-      const timer = setTimeout(() => {
-        setHistory([{ type: 'ai', text: introText }]);
-        setAiResponse(introText);
-        handleSpeak(introText);
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [aiMode]);
-
-  const handleSpeak = async (text: string) => {
+  const handleSpeak = useCallback(async (text: string) => {
     try {
       const audioRes = await fetch('/api/speak', {
         method: 'POST',
@@ -69,7 +53,55 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     } catch (e) {
       console.error("Speak failed:", e);
     }
-  };
+  }, []);
+
+  // Initial Intro Logic
+  useEffect(() => {
+    if (aiMode && history.length === 0) {
+      const introText = "Hi, this is Mohsin’s AI assistant. He builds intelligent web products that solve real-world problems. His work combines modern full-stack engineering with applied AI. You can explore his projects, journey, and technical initiatives here.";
+      
+      // Artificial delay for cinematic feel
+      const timer = setTimeout(() => {
+        setHistory([{ type: 'ai', text: introText }]);
+        setAiResponse(introText);
+        handleSpeak(introText);
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [aiMode, history.length, handleSpeak]);
+
+  const handleAnalyze = useCallback(async (textToAnalyze: string) => {
+    if (!textToAnalyze || textToAnalyze === "Listening...") return;
+    
+    // Add user message to history
+    setHistory(prev => [...prev, { type: 'user', text: textToAnalyze }]);
+    setAiResponse("Analyzing...");
+    
+    try {
+      const gRes = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: textToAnalyze })
+      });
+
+      const data = await gRes.json();
+      
+      if (!gRes.ok) {
+        throw new Error(data.error || "Failed to generate content");
+      }
+
+      const reply = data.reply || "I'm having trouble thinking right now.";
+      setAiResponse(reply);
+      setHistory(prev => [...prev, { type: 'ai', text: reply }]);
+
+      // Use centralized speak handler
+      handleSpeak(reply);
+
+    } catch (error: any) {
+      setAiResponse(`Error: ${error.message}`);
+    }
+  }, [handleSpeak]);
 
   useEffect(() => {
     // Initialize Web Speech API
@@ -108,7 +140,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
         setAiResponse("Speech recognition not supported in this browser.");
       }
     }
-  }, []);
+  }, [handleAnalyze]);
 
   const handlePointerDown = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
@@ -142,38 +174,6 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     }
   };
 
-  const handleAnalyze = async (textToAnalyze: string) => {
-    if (!textToAnalyze || textToAnalyze === "Listening...") return;
-    
-    // Add user message to history
-    setHistory(prev => [...prev, { type: 'user', text: textToAnalyze }]);
-    setAiResponse("Analyzing...");
-    
-    try {
-      const gRes = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: textToAnalyze })
-      });
-
-      const data = await gRes.json();
-      
-      if (!gRes.ok) {
-        throw new Error(data.error || "Failed to generate content");
-      }
-
-      const reply = data.reply || "I'm having trouble thinking right now.";
-      setAiResponse(reply);
-      setHistory(prev => [...prev, { type: 'ai', text: reply }]);
-
-      // Use centralized speak handler
-      handleSpeak(reply);
-
-    } catch (error: any) {
-      setAiResponse(`Error: ${error.message}`);
-    }
-  };
-
   return (
     <AnimatePresence>
       {aiMode && (
@@ -196,9 +196,9 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
               }}
               className="group flex flex-col items-center gap-2 text-white/40 hover:text-white transition-colors duration-300"
             >
-              <div className="w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center group-hover:bg-white/10 group-hover:scale-105 transition-all">
+              <span className="w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center group-hover:bg-white/10 group-hover:scale-105 transition-all">
                 <X size={20} />
-              </div>
+              </span>
               <span className="text-[10px] uppercase tracking-widest font-mono">Exit AI</span>
             </button>
           </div>
@@ -210,6 +210,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
               ref={scrollRef}
               className="w-full flex-1 overflow-y-auto px-4 py-8 custom-scrollbar space-y-12"
               style={{ maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)' }}
+              suppressHydrationWarning
             >
               {history.map((msg, i) => (
                 <motion.div
@@ -222,16 +223,16 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
                   {msg.type === 'user' ? (
                     <div className="flex flex-col items-end gap-2">
                        <span className="text-[10px] font-mono text-white/30 tracking-[0.3em] uppercase">User Input</span>
-                       <p className="text-xl md:text-2xl font-mono text-white/60 text-right leading-relaxed italic">
-                         "{msg.text}"
-                       </p>
+                       <div className="text-xl md:text-2xl font-mono text-white/60 text-right leading-relaxed italic">
+                         <span>&quot;{msg.text}&quot;</span>
+                       </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-start gap-3">
                        <span className="text-[10px] font-mono text-orange-500/60 tracking-[0.3em] uppercase">Mohsin AI</span>
-                       <p className="text-2xl md:text-4xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] content-glow">
-                         {msg.text}
-                       </p>
+                       <div className="text-2xl md:text-4xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] content-glow">
+                         <span>{msg.text}</span>
+                       </div>
                     </div>
                   )}
                 </motion.div>
@@ -263,7 +264,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
               <span className={`relative inline-flex rounded-full h-2 w-2 ${isSpeaking ? 'bg-blue-500' : (isListening ? 'bg-red-500' : 'bg-orange-500')}`}></span>
             </div>
             <span className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isSpeaking ? 'text-blue-400' : (isListening ? 'text-red-400' : 'text-orange-400')}`}>
-              {isSpeaking ? 'AI Speaking' : (isListening ? 'Receiving Audio' : 'Awaiting Input')}
+              <span>{isSpeaking ? 'AI Speaking' : (isListening ? 'Receiving Audio' : 'Awaiting Input')}</span>
             </span>
           </div>
 
@@ -308,9 +309,9 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
 
           {/* Transcript Guide */}
           <div className="h-[30px] mt-4 flex items-center justify-center w-full z-10">
-             <p className="text-[10px] font-mono tracking-widest text-white/20 uppercase">
-               {transcript ? transcript : (isListening ? "Listening..." : "Hold to speak")}
-             </p>
+             <div className="text-[10px] font-mono tracking-widest text-white/20 uppercase">
+               <span>{transcript ? transcript : (isListening ? "Listening..." : "Hold to speak")}</span>
+             </div>
           </div>
 
         </motion.div>

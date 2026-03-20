@@ -113,7 +113,7 @@ const RippleSurface = ({ activeImage, onNext }: { activeImage: string, onNext: (
     u_resolution: { value: new THREE.Vector2(size.width, size.height) },
     u_imageRes: { value: new THREE.Vector2(1920, 1080) }, // Default fallback
     u_time: { value: 0.0 }
-  }), []); 
+  }), [size.width, size.height, tex1, tex2]); 
 
   // Manual sync for textures, aspect, and resolution
   useEffect(() => {

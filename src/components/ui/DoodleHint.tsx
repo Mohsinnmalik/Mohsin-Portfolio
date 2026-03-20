@@ -29,7 +29,7 @@ export function DoodleHint() {
         transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
         className={`${caveat.className} text-orange-400 text-2xl md:text-3xl font-bold tracking-wider rotate-[10deg] drop-shadow-[0_0_8px_rgba(249,115,22,0.6)]`}
       >
-        psst... hold me for 5s!
+        <span>psst... hold me for 5s!</span>
       </motion.div>
       
       {/* Chaotic Scribble Arrow */}

@@ -15,10 +15,10 @@ export function ContactSection() {
           <h2 className="text-4xl md:text-6xl font-black text-white tracking-tighter mb-8 leading-tight">
             Let&apos;s Build Something <span className="text-orange-500">Incredible.</span>
           </h2>
-          <p className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto font-light">
+          <div className="text-lg md:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto font-light">
             Whether you have a specific AI integration challenge or a large-scale web project, 
             I&apos;m ready to turn your vision into a production-ready reality.
-          </p>
+          </div>
         </motion.div>
       </div>
     </section>

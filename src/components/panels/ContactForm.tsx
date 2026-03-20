@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useState } from "react";
 import { Send, User, Mail, MessageSquare } from "lucide-react";
 
@@ -38,16 +39,18 @@ export function ContactForm() {
           >
             <div className="text-left mb-10">
               <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mb-4">Get In Touch</h2>
-              <p className="text-slate-400 font-light">Let&apos;s discuss your next project or system architecture.</p>
+              <div className="text-slate-400 font-light">Let&apos;s discuss your next project or system architecture.</div>
             </div>
 
             <div className="relative group">
               {/* Glass Frame for Avatar */}
               <div className="absolute -inset-4 bg-gradient-to-tr from-orange-500/20 to-blue-500/20 rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
               <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 bg-slate-900/50 backdrop-blur-xl aspect-square max-w-md mx-auto lg:mx-0">
-                <img 
+                <Image 
                   src="/images/contact-avatar.jpg" 
                   alt="Mohsin Malik Avatar" 
+                  width={800}
+                  height={800}
                   className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                 />
                 
