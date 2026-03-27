@@ -22,7 +22,7 @@ export function Model(props: any) {
     holdTimer.current = setTimeout(() => {
       setIsHolding(false);
       setAiMode(true);
-    }, 3000);
+    }, 2500); // 2.5 seconds for snappier entry
   };
 
   const handlePointerUp = (e: any) => {
@@ -110,16 +110,45 @@ export function Model(props: any) {
     >
       <primitive object={scene} />
 
-      {!aiMode && (
+      {!aiMode && !isHolding && (
         <Html 
           position={[0.6, 1.2, 0]} 
           center 
           zIndexRange={[100, 0]}
-          className="pointer-events-none"
+          className="pointer-events-none transition-opacity duration-300"
         >
           <div style={{ transform: "scale(1.5)", zIndex: 999 }}>
             <DoodleHint />
           </div>
+        </Html>
+      )}
+
+      {isHolding && !aiMode && (
+        <Html 
+          position={[0, 1.5, 0]} 
+          center 
+          zIndexRange={[100, 0]}
+          className="pointer-events-none transition-opacity duration-300"
+        >
+          <div className="flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-md px-6 py-4 rounded-2xl border border-orange-500/50">
+            <span className="text-orange-500 font-mono text-sm tracking-widest uppercase animate-pulse">
+              Initializing AI...
+            </span>
+            <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-orange-500"
+                style={{ 
+                  animation: "fillProgress 2.5s linear forwards" 
+                }}
+              />
+            </div>
+          </div>
+          <style>{`
+            @keyframes fillProgress {
+              0% { width: 0%; }
+              100% { width: 100%; }
+            }
+          `}</style>
         </Html>
       )}
     </group>

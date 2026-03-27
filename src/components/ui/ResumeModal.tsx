@@ -16,12 +16,12 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
   const resumes = {
     fullstack: {
       title: "Full Stack Developer",
-      image: "/images/mohsin-fullstack-resume.jpg",
+      image: "/images/fullstack-resume.jpg",
       description: "Focused on scalable SaaS, MERN stack, and high-performance web systems."
     },
     genai: {
       title: "Generative AI Engineer",
-      image: "/images/mohsin-genai-resume.jpg",
+      image: "/images/genai-resume.jpg",
       description: "Focused on LLM integration, AI automation, and intelligent product design."
     }
   };

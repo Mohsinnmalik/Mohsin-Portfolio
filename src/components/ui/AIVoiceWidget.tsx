@@ -142,34 +142,32 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
     }
   }, [handleAnalyze]);
 
-  const handlePointerDown = (e?: React.MouseEvent | React.TouchEvent) => {
+  const handleToggleListening = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
       e.preventDefault(); 
       e.stopPropagation();
     }
-    if (recognitionRef.current && !isListening) {
-      try {
-        transcriptRef.current = "";
-        recognitionRef.current.start();
-        setIsListening(true);
-        setTranscript("Listening...");
-      } catch (e) {
-        console.error("Failed to start recognition, it might already be running.", e);
+    
+    // If already listening, stop to trigger analysis
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (err) {
+          console.error("Failed to stop recognition.", err);
+        }
       }
-    }
-  };
-
-  const handlePointerUp = (e?: React.MouseEvent | React.TouchEvent) => {
-    if (e) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    if (recognitionRef.current && isListening) {
-      try {
-        recognitionRef.current.stop();
-        setIsListening(false);
-      } catch (e) {
-        console.error("Failed to stop recognition.", e);
+    } else {
+      // Start listening
+      if (recognitionRef.current) {
+        try {
+          transcriptRef.current = "";
+          recognitionRef.current.start();
+          setIsListening(true);
+          setTranscript("Listening...");
+        } catch (e) {
+          console.error("Failed to start recognition", e);
+        }
       }
     }
   };
@@ -284,19 +282,13 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
             )}
 
             <button
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onPointerLeave={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-              onTouchStart={handlePointerDown}
-              onTouchEnd={handlePointerUp}
-              onTouchCancel={handlePointerUp}
+              onClick={handleToggleListening}
               className={`relative z-10 w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 touch-none select-none backdrop-blur-xl ${
                 isListening
                   ? "bg-red-500/10 border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.5)] scale-90"
                   : isSpeaking
                     ? "bg-blue-500/10 border border-blue-500/50"
-                    : "bg-white/5 border border-white/20 hover:border-orange-500/50 hover:scale-105"
+                    : "bg-white/5 border border-white/20 hover:border-orange-500/50 hover:scale-105 cursor-pointer"
               }`}
             >
               {isListening ? (
@@ -310,7 +302,7 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
           {/* Transcript Guide */}
           <div className="h-[30px] mt-4 flex items-center justify-center w-full z-10">
              <div className="text-[10px] font-mono tracking-widest text-white/20 uppercase">
-               <span>{transcript ? transcript : (isListening ? "Listening..." : "Hold to speak")}</span>
+               <span>{transcript ? transcript : (isListening ? "Tap to stop listening..." : "Tap to speak")}</span>
              </div>
           </div>
 

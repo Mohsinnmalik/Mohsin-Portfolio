@@ -10,7 +10,7 @@ const SHOWCASE_DATA = [
         id: "codeflux",
         subheading: "EdTech Startup Platform",
         headline: "CODEFLUX",
-        image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/codeflux-hero.png",
         description: "Founded and built an AI-focused EdTech platform delivering real-world tech workshops, AI training sessions, and digital learning solutions. Designed full-stack SaaS architecture, managed deployments, and generated real revenue through tech initiatives.",
         tech: ["Next.js", "Node.js", "MongoDB", "AI Tools", "Vercel"]
     },
@@ -18,7 +18,7 @@ const SHOWCASE_DATA = [
         id: "docuflux",
         subheading: "Health-Tech AI Platform",
         headline: "DOCUFLUX",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/docuflux.png",
         description: "Privacy-first health-tech platform converting doctor-patient conversations into real-time clinical records. Features AI transcription & zero-trust consent.",
         tech: ["React", "Node.js", "AI APIs", "MongoDB"]
     },
@@ -26,7 +26,7 @@ const SHOWCASE_DATA = [
         id: "resucrafty",
         subheading: "AI Resume Builder",
         headline: "RESUCRAFTY",
-        image: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/resucrafty.png",
         description: "Built an interactive AI-powered resume builder that guides users step-by-step to create optimized resumes with ATS-friendly formatting. Designed conversational UI flow and intelligent content generation features.",
         tech: ["Python", "AI APIs", "HTML", "CSS", "JS"]
     },
@@ -34,7 +34,7 @@ const SHOWCASE_DATA = [
         id: "civicsaathi",
         subheading: "AI Civic Reporting",
         headline: "CIVICSAATHI",
-        image: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/civicsaathi.png",
         description: "AI-powered civic reporting platform using Computer Vision to detect waste/potholes and automate structured reporting for municipalities.",
         tech: ["MERN Stack", "Computer Vision"]
     },
@@ -42,7 +42,7 @@ const SHOWCASE_DATA = [
         id: "collegedochub",
         subheading: "Academic Automation",
         headline: "COLLEGEDOCHUB",
-        image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/collegedochub.png",
         description: "AI-powered document automation for institutional templates. Uses OCR and Gemini API for error-free academic resource management.",
         tech: ["Python", "OCR", "Gemini API", "React"]
     },
@@ -50,7 +50,7 @@ const SHOWCASE_DATA = [
         id: "ai-calling-agent",
         subheading: "AI Voice Automation",
         headline: "AI CALLING AGENT",
-        image: "https://images.unsplash.com/photo-1589254065878-42c9da997008?auto=format&fit=crop&q=80&w=1200",
+        image: "/images/showcase/ai-calling-agent.png",
         description: "Built an AI-powered voice assistant capable of automating conversational workflows such as business outreach and user interaction handling. Integrated speech processing and intelligent response generation.",
         tech: ["Python", "AI APIs", "Voice APIs"]
     }

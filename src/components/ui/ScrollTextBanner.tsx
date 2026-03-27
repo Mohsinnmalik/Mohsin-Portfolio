@@ -29,29 +29,35 @@ export function ScrollTextBanner() {
 
         <motion.div style={{ x: xTransformOpposite }} className="whitespace-nowrap flex w-max">
           <h2 className="stb-text stb-stroke">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
           <span className="stb-separator" />
           <h2 className="stb-text stb-stroke">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
           <span className="stb-separator" />
           <h2 className="stb-text stb-stroke">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
         </motion.div>
 
         <motion.div style={{ x: xTransform }} className="whitespace-nowrap flex w-max">
           <h2 className="stb-text stb-fill text-orange-500">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
           <span className="stb-separator bg-orange-500" />
           <h2 className="stb-text stb-fill text-orange-500">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
           <span className="stb-separator bg-orange-500" />
           <h2 className="stb-text stb-fill text-orange-500">
-            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION DAY 1!
+            I BUILD INTELLIGENT PRODUCTS — OBSESSED WITH CREATION SINCE DAY 1!
+
           </h2>
         </motion.div>
       </div>
