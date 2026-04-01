@@ -6,6 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Scene3D } from "./Scene3D";
 import { useUIStore } from "@/store/useUIStore";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { Mic } from "lucide-react";
 import { AIVoiceWidget } from "@/components/ui/AIVoiceWidget";
 import { DoodleHint } from "@/components/ui/DoodleHint";
 import { ResumeModal } from "@/components/ui/ResumeModal";
@@ -121,22 +122,22 @@ export function HeroSection() {
                 key="hero-text"
                 initial={{ opacity: 1 }}
                 exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
-                className="hero-text w-full md:w-6/12 text-center md:text-left pointer-events-auto"
+                className="hero-text w-full md:w-6/12 text-center md:text-left pointer-events-none"
               >
-                <div className="text-orange-500 font-mono tracking-[0.2em] text-[10px] md:text-xs mb-4 uppercase font-bold drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]">
+                <div className="text-orange-500 font-mono tracking-[0.2em] text-[10px] md:text-xs mb-4 uppercase font-bold drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] pointer-events-auto inline-block">
                   <span>FULL STACK ENGINEER • AI PRODUCT BUILDER • STARTUP FOUNDER</span>
                 </div>
                 
-                <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-4">
+                <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-4 pointer-events-auto inline-block">
                   <span>Mohsin Malik</span>
                 </h1>
                 
-                <h2 className="text-xl md:text-3xl font-medium text-slate-200 mb-6 flex flex-col md:flex-row md:items-center gap-2">
+                <h2 className="text-xl md:text-3xl font-medium text-slate-200 mb-6 flex flex-col md:flex-row md:items-center gap-2 pointer-events-auto inline-flex">
                   <span>Hi, I&apos;m Mohsin Malik.</span>
                   <span className="text-slate-400"><span>I build real-world web products.</span></span>
                 </h2>
                 
-                <div className="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-lg mb-8">
+                <div className="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-lg mb-8 pointer-events-auto mx-auto md:mx-0">
                   <span>Full Stack Developer focused on building <span className="text-slate-200"><span>scalable SaaS platforms</span></span>, 
                   <span className="text-slate-200"><span> AI-integrated applications</span></span>, and <span className="text-slate-200"><span>high-performance web systems</span></span>. 
                   I turn ideas into production-ready products used by real users.</span>
@@ -157,7 +158,7 @@ export function HeroSection() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-5 justify-center md:justify-start">
+                <div className="flex flex-wrap gap-5 justify-center md:justify-start pointer-events-auto">
                   <button 
                     onClick={() => {
                         const projects = document.getElementById("projects");
@@ -172,6 +173,13 @@ export function HeroSection() {
                     className="px-8 py-3.5 rounded-xl border border-orange-500/50 text-orange-400 font-bold text-sm tracking-wide hover:bg-orange-500/10 hover:border-orange-500 transition-all duration-300 active:scale-95"
                   >
                     Read Resume
+                  </button>
+                  <button 
+                    onClick={() => useUIStore.getState().setAiMode(true)}
+                    className="flex items-center gap-2 px-8 py-3.5 rounded-xl border border-blue-500/50 text-blue-400 font-bold text-sm tracking-wide hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300 active:scale-95 bg-blue-500/5 backdrop-blur-sm"
+                  >
+                    <Mic size={16} />
+                    Talk to AI
                   </button>
                 </div>
             </motion.div>

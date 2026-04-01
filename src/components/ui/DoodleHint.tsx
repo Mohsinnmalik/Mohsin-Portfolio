@@ -2,17 +2,21 @@
 
 import { motion } from "framer-motion";
 import { Caveat } from "next/font/google";
+import { useUIStore } from "@/store/useUIStore";
 
 const caveat = Caveat({ subsets: ["latin"], weight: ["700"] });
 
 export function DoodleHint() {
+  const setAiMode = useUIStore((state) => state.setAiMode);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.1 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.1, transition: { duration: 0.2 } }}
       transition={{ duration: 1.2, delay: 1, type: "spring", bounce: 0.5 }}
-      className="absolute top-[15%] right-[5%] md:right-[25%] z-30 pointer-events-none flex flex-col items-center w-[250px]"
+      onClick={() => setAiMode(true)}
+      className="absolute top-[15%] right-[5%] md:right-[25%] z-30 pointer-events-auto cursor-pointer flex flex-col items-center w-[250px]"
     >
       {/* Floating Sparkle/Star */}
       <motion.div

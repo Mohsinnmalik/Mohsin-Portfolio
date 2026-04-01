@@ -59,8 +59,6 @@ export async function POST(req: Request) {
         generationConfig: {
           temperature: 0.35,
           topP: 0.9,
-          presencePenalty: 0.2,
-          frequencyPenalty: 0.15,
           maxOutputTokens: 180
         }
       })
