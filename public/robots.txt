@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# SEO: Sitemap location for all crawlers
+Sitemap: https://mohsin-portfolio-orpin.vercel.app/sitemap.xml

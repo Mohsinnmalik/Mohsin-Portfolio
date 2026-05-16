@@ -2,13 +2,14 @@
 
 import { useProgress } from "@react-three/drei";
 import { useEffect, useState } from "react";
-import { useUIStore } from "@/store/useUIStore";
 import { motion, AnimatePresence } from "framer-motion";
 
+// BUG-23 FIX: LoadingScreen was the only user of isLoaded in the Zustand store.
+// Migrated to local state — no other component needs to observe this loading state.
 export function LoadingScreen() {
   const { progress } = useProgress();
-  const setIsLoaded = useUIStore((state) => state.setIsLoaded);
-  const isLoaded = useUIStore((state) => state.isLoaded);
+  // Use local state instead of global store
+  const [isLoaded, setIsLoaded] = useState(false);
   // Add an intentional minimum load time so the animation always shows
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
 
@@ -26,7 +27,7 @@ export function LoadingScreen() {
       const timeout = setTimeout(() => setIsLoaded(true), 500);
       return () => clearTimeout(timeout);
     }
-  }, [progress, minTimeElapsed, setIsLoaded]);
+  }, [progress, minTimeElapsed]);
 
   return (
     <AnimatePresence>

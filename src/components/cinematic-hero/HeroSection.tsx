@@ -8,15 +8,17 @@ import { useUIStore } from "@/store/useUIStore";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { Mic } from "lucide-react";
 import { AIVoiceWidget } from "@/components/ui/AIVoiceWidget";
-import { DoodleHint } from "@/components/ui/DoodleHint";
+
 import { ResumeModal } from "@/components/ui/ResumeModal";
 import { ClientOnly } from "@/components/ui/ClientOnly";
+import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const aiMode = useUIStore((state) => state.aiMode);
   const [isMounted, setIsMounted] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
+  const prefersReduced = useReducedMotion();
 
   // Scroll-driven cinematic exit — only activates in the very last portion of hero scroll
   // Keeps the hero fully clear and enjoyable until you're really leaving
@@ -37,12 +39,17 @@ export function HeroSection() {
   }, []);
 
   // Lock body scroll when AI mode is active to prevent user from scrolling away from the face
+  // BUG-18 FIX: Setting overflow:'auto' conflicts with Lenis (it needs overflow unset, not 'auto').
+  // Use empty string to REMOVE the inline style when exiting AI mode — Lenis takes control again.
   useEffect(() => {
     if (aiMode) {
       document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = ""; // ← unsets the inline style; Lenis resumes
     }
+    return () => {
+      document.body.style.overflow = ""; // cleanup on unmount
+    };
   }, [aiMode]);
 
   useLayoutEffect(() => {
@@ -92,10 +99,17 @@ export function HeroSection() {
         style={{ opacity: veilOpacity }}
         aria-hidden="true"
       />
-      {/* Scale + blur wrapper around the actual 3D content */}
+      {/* Scale + blur wrapper — will-change pre-applied so GPU layer is promoted before animation starts */}
+      {/* PERF FIX: will-change set in inline style BEFORE motion applies filter, satisfying GPU promotion rule */}
       <motion.div
         className="absolute inset-0 w-full h-full"
-        style={{ scale: heroScale, filter: heroFilter, transformOrigin: 'center center' }}
+        style={{
+          scale: prefersReduced ? 1 : heroScale,
+          filter: prefersReduced ? undefined : heroFilter,
+          transformOrigin: 'center center',
+          willChange: 'transform, filter',
+          transform: 'translateZ(0)',
+        }}
       >
       {/* Background Gradient */}
       <div 
@@ -117,7 +131,7 @@ export function HeroSection() {
           {!isMounted || !aiMode ? (
             /* Right-aligned text block that fades in late in the scroll */
             <motion.div key="hero-ui-main" className="contents">
-              <DoodleHint key="doodle-hint" />
+              {/* DoodleHint lives inside Model.tsx (3D Html portal) — not duplicated here */}
               <motion.div 
                 key="hero-text"
                 initial={{ opacity: 1 }}

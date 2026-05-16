@@ -13,5 +13,11 @@
       "static/css/_app-pages-browser_src_components_reactbits_TargetCursor_tsx.css",
       "static/chunks/_app-pages-browser_src_components_reactbits_TargetCursor_tsx.js"
     ]
+  },
+  "components\\MainApp.tsx -> lenis": {
+    "id": "components\\MainApp.tsx -> lenis",
+    "files": [
+      "static/chunks/_app-pages-browser_node_modules_lenis_dist_lenis_mjs.js"
+    ]
   }
 }

@@ -1,16 +1,21 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
 export function Hero() {
+  const prefersReduced = useReducedMotion();
+
+  // PERF FIX: Replaced filter:blur with scale+opacity — GPU composited, no layout reflow
   return (
     <section className="h-screen flex items-center justify-center relative pointer-events-none">
       <div className="container mx-auto px-6 md:px-12 flex flex-col items-center text-center">
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
-          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          initial={prefersReduced ? false : { opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
           className="max-w-4xl pointer-events-auto"
+          style={{ willChange: "transform, opacity" }}
         >
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-white/10 mb-8 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse" />

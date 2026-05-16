@@ -15,9 +15,18 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
   const [transcript, setTranscript] = useState("");
   const [aiResponse, setAiResponse] = useState("Awaiting voice input...");
   const [history, setHistory] = useState<{ type: 'user' | 'ai', text: string }[]>([]);
+  const [hasError, setHasError] = useState(false);
+  // PERF: Rate limiting — max 10 messages per session via sessionStorage
+  const [msgCount, setMsgCount] = useState<number>(() => {
+    if (typeof window === 'undefined') return 0;
+    return parseInt(sessionStorage.getItem('ai_msg_count') || '0', 10);
+  });
+  const MAX_MESSAGES = 10;
 
   const recognitionRef = useRef<any>(null);
   const transcriptRef = useRef("");
+  // BUG-10 FIX: Track whether intro has been spoken — prevents re-firing on every message
+  const introPlayedRef = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom of conversation
@@ -52,13 +61,17 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
       audio.play();
     } catch (e) {
       console.error("Speak failed:", e);
+      setIsSpeaking(false);
     }
   }, []);
 
   // Initial Intro Logic
+  // BUG-10 FIX: introPlayedRef guards against re-firing when handleSpeak reference changes
+  // (handleSpeak recreates on every msgCount change due to useCallback deps)
   useEffect(() => {
-    if (aiMode && history.length === 0) {
-      const introText = "Hi, this is Mohsin’s AI assistant. He builds intelligent web products that solve real-world problems. His work combines modern full-stack engineering with applied AI. You can explore his projects, journey, and technical initiatives here.";
+    if (aiMode && !introPlayedRef.current) {
+      introPlayedRef.current = true;
+      const introText = "Hi, this is Mohsin's AI assistant. He builds intelligent web products that solve real-world problems. His work combines modern full-stack engineering with applied AI. You can explore his projects, journey, and technical initiatives here.";
       
       // Artificial delay for cinematic feel
       const timer = setTimeout(() => {
@@ -69,39 +82,88 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
       
       return () => clearTimeout(timer);
     }
-  }, [aiMode, history.length, handleSpeak]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aiMode]);
 
   const handleAnalyze = useCallback(async (textToAnalyze: string) => {
     if (!textToAnalyze || textToAnalyze === "Listening...") return;
-    
-    // Add user message to history
+
+    // Rate limiting: enforce max 10 messages per session
+    if (msgCount >= MAX_MESSAGES) {
+      setHasError(true);
+      return;
+    }
+
+    // Increment rate limit counter immediately
+    const newCount = msgCount + 1;
+    setMsgCount(newCount);
+    sessionStorage.setItem('ai_msg_count', String(newCount));
+
+    // Add user message atomically
     setHistory(prev => [...prev, { type: 'user', text: textToAnalyze }]);
     setAiResponse("Analyzing...");
-    
+    setHasError(false); // Always clear error state before a new request
+
     try {
-      const gRes = await fetch('/api/gemini', {
+      // AI: Try streaming route first
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text: textToAnalyze })
       });
 
-      const data = await gRes.json();
-      
-      if (!gRes.ok) {
-        throw new Error(data.error || "Failed to generate content");
+      // AI: If streaming fails, fall back to the standard /api/gemini route
+      if (!res.ok || !res.body) {
+        console.warn("Streaming failed, falling back to /api/gemini");
+        const fallbackRes = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: textToAnalyze })
+        });
+        const data = await fallbackRes.json();
+        if (!fallbackRes.ok) throw new Error(data.error || "API error");
+        const reply = data.reply || "I'm having trouble thinking right now.";
+        setHistory(prev => [...prev, { type: 'ai', text: reply }]);
+        setAiResponse(reply);
+        handleSpeak(reply);
+        return;
       }
 
-      const reply = data.reply || "I'm having trouble thinking right now.";
-      setAiResponse(reply);
-      setHistory(prev => [...prev, { type: 'ai', text: reply }]);
+      // AI: Stream tokens — accumulate in local variable, display via setAiResponse
+      // Commits ONE atomic setHistory entry after streaming completes (no mid-stream mutations)
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let fullReply = "";
 
-      // Use centralized speak handler
-      handleSpeak(reply);
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        fullReply += chunk;
+        // Update live streaming display — does NOT touch history array (no DOM key churn)
+        setAiResponse(fullReply);
+      }
+
+      // Commit the complete message ONCE after stream ends — single atomic history update
+      if (fullReply) {
+        setHistory(prev => [...prev, { type: 'ai', text: fullReply }]);
+        setAiResponse(fullReply);
+        handleSpeak(fullReply);
+      } else {
+        // Empty response — try fallback
+        throw new Error("Empty response from streaming");
+      }
 
     } catch (error: any) {
-      setAiResponse(`Error: ${error.message}`);
+      console.error("AI request failed:", error);
+      // Show error inline in conversation instead of blocking overlay
+      const errorMsg = "Sorry, I had a hiccup. Try asking again!";
+      setHistory(prev => [...prev, { type: 'ai', text: errorMsg }]);
+      setAiResponse(errorMsg);
     }
-  }, [handleSpeak]);
+  }, [handleSpeak, msgCount]);
+
+
 
   useEffect(() => {
     // Initialize Web Speech API
@@ -144,10 +206,13 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
 
   const handleToggleListening = (e?: React.MouseEvent | React.TouchEvent) => {
     if (e) {
-      e.preventDefault(); 
+      e.preventDefault();
       e.stopPropagation();
     }
-    
+
+    // Auto-clear error so user can speak again without hitting "Try again"
+    if (hasError) setHasError(false);
+
     // If already listening, stop to trigger analysis
     if (isListening) {
       if (recognitionRef.current) {
@@ -185,6 +250,35 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
           {/* Subtle Dark Vignette Overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/90 pointer-events-none" />
 
+          {/* Error Banner — floating card, NOT inset-0 so it never blocks the mic */}
+          {hasError && msgCount >= MAX_MESSAGES && (
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20
+              flex flex-col items-center gap-4 pointer-events-auto
+              bg-[#0a0f1d]/95 backdrop-blur-xl rounded-3xl border border-orange-500/20
+              px-8 py-8 max-w-sm w-[90vw] text-center shadow-2xl">
+              <p className="text-white/70 text-base font-light">
+                Session limit reached (10 messages). Come back tomorrow or reach out directly!
+              </p>
+              <a
+                href="mailto:mohsin@codeflux.dev"
+                className="px-6 py-3 rounded-xl bg-orange-500/10 border border-orange-500/50 text-orange-400 font-bold text-sm tracking-wide hover:bg-orange-500/20 transition-all"
+              >
+                Drop me an email instead →
+              </a>
+              {/* BUG-09 FIX: Removed 'Reset session' button — it let users trivially bypass
+                  the 10-message rate limit with a single click */}
+            </div>
+          )}
+
+          {/* Rate limit soft notice — small floating badge, doesn't block anything */}
+          {msgCount >= MAX_MESSAGES && !hasError && (
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 pointer-events-none">
+              <span className="text-orange-400 text-xs font-mono tracking-widest">
+                10/10 messages used this session
+              </span>
+            </div>
+          )}
+
           {/* Exit Button - Top Right */}
           <div className="absolute top-8 right-8 pointer-events-auto">
             <button
@@ -213,9 +307,11 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
               {history.map((msg, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  // PERF FIX: Replaced filter:blur(8px) with y+opacity — GPU composited only
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, ease: "easeOut" }}
+                  style={{ willChange: 'transform, opacity' }}
                   className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} max-w-full`}
                 >
                   {msg.type === 'user' ? (
@@ -236,7 +332,28 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
                 </motion.div>
               ))}
 
-              {/* Dynamic Analyzing State */}
+              {/* AI: Live streaming display — shows tokens as they arrive before committing to history */}
+              {/* This only shows when aiResponse is actively being streamed (not yet in history) */}
+              {aiResponse !== "Awaiting voice input..." &&
+                aiResponse !== "Analyzing..." &&
+                !history.some(m => m.type === 'ai' && m.text === aiResponse) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="flex flex-col items-start gap-3"
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  <span className="text-[10px] font-mono text-orange-500/60 tracking-[0.3em] uppercase">Mohsin AI ▊</span>
+                  <div className="text-2xl md:text-4xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] content-glow">
+                    <span>{aiResponse}</span>
+                    {/* Blinking cursor while streaming */}
+                    <span className="inline-block w-0.5 h-8 bg-orange-400 ml-1 animate-pulse align-middle" />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Dynamic Analyzing State — shown while waiting for first token */}
               {aiResponse === "Analyzing..." && (
                 <motion.div
                   initial={{ opacity: 0 }}

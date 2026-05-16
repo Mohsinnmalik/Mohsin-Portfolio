@@ -11,6 +11,7 @@ const SHOWCASE_DATA = [
         subheading: "EdTech Startup Platform",
         headline: "CODEFLUX",
         image: "/images/showcase/codeflux-hero.png",
+        url: "https://codeflux.dev",
         description: "Founded and built an AI-focused EdTech platform delivering real-world tech workshops, AI training sessions, and digital learning solutions. Designed full-stack SaaS architecture, managed deployments, and generated real revenue through tech initiatives.",
         tech: ["Next.js", "Node.js", "MongoDB", "AI Tools", "Vercel"]
     },
@@ -19,6 +20,7 @@ const SHOWCASE_DATA = [
         subheading: "Health-Tech AI Platform",
         headline: "DOCUFLUX",
         image: "/images/showcase/docuflux.png",
+        url: "https://github.com/Mohsinnmalik",
         description: "Privacy-first health-tech platform converting doctor-patient conversations into real-time clinical records. Features AI transcription & zero-trust consent.",
         tech: ["React", "Node.js", "AI APIs", "MongoDB"]
     },
@@ -27,6 +29,7 @@ const SHOWCASE_DATA = [
         subheading: "AI Resume Builder",
         headline: "RESUCRAFTY",
         image: "/images/showcase/resucrafty.png",
+        url: "https://github.com/Mohsinnmalik",
         description: "Built an interactive AI-powered resume builder that guides users step-by-step to create optimized resumes with ATS-friendly formatting. Designed conversational UI flow and intelligent content generation features.",
         tech: ["Python", "AI APIs", "HTML", "CSS", "JS"]
     },
@@ -35,6 +38,7 @@ const SHOWCASE_DATA = [
         subheading: "AI Civic Reporting",
         headline: "CIVICSAATHI",
         image: "/images/showcase/civicsaathi.png",
+        url: "https://github.com/Mohsinnmalik",
         description: "AI-powered civic reporting platform using Computer Vision to detect waste/potholes and automate structured reporting for municipalities.",
         tech: ["MERN Stack", "Computer Vision"]
     },
@@ -43,6 +47,7 @@ const SHOWCASE_DATA = [
         subheading: "Academic Automation",
         headline: "COLLEGEDOCHUB",
         image: "/images/showcase/collegedochub.png",
+        url: "https://github.com/Mohsinnmalik",
         description: "AI-powered document automation for institutional templates. Uses OCR and Gemini API for error-free academic resource management.",
         tech: ["Python", "OCR", "Gemini API", "React"]
     },
@@ -51,6 +56,7 @@ const SHOWCASE_DATA = [
         subheading: "AI Voice Automation",
         headline: "AI CALLING AGENT",
         image: "/images/showcase/ai-calling-agent.png",
+        url: "https://github.com/Mohsinnmalik",
         description: "Built an AI-powered voice assistant capable of automating conversational workflows such as business outreach and user interaction handling. Integrated speech processing and intelligent response generation.",
         tech: ["Python", "AI APIs", "Voice APIs"]
     }
@@ -61,6 +67,8 @@ export const ShowcaseSection = () => {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const carouselRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
+    // BUG-11 FIX: Track resume timer so it can be cleared when user interacts again
+    const resumeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const activeItem = SHOWCASE_DATA[activeIndex];
 
@@ -83,18 +91,25 @@ export const ShowcaseSection = () => {
     }, [isAutoPlaying]); // Re-run when play state changes
 
     const handleNext = () => {
-        setIsAutoPlaying(false); // Pause auto-play on manual interact
+        setIsAutoPlaying(false);
         setActiveIndex((prev) => (prev + 1) % SHOWCASE_DATA.length);
+        // BUG-11 FIX: Resume auto-play after 10s of user inactivity
+        if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+        resumeTimerRef.current = setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
     const handlePrev = () => {
-        setIsAutoPlaying(false); // Pause auto-play on manual interact
+        setIsAutoPlaying(false);
         setActiveIndex((prev) => (prev - 1 + SHOWCASE_DATA.length) % SHOWCASE_DATA.length);
+        if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+        resumeTimerRef.current = setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
     const handleCardClick = (index: number) => {
-        setIsAutoPlaying(false); // Pause auto-play on manual interact
+        setIsAutoPlaying(false);
         setActiveIndex(index);
+        if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+        resumeTimerRef.current = setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
     // Auto-scroll carousel active item into view
@@ -208,8 +223,11 @@ export const ShowcaseSection = () => {
                         </div>
 
                         <div className="flex items-center gap-4">
-                            <motion.button
+                            <motion.a
                                 key={`cta-${activeItem.id}`}
+                                href={activeItem.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.4, delay: 0.4 }}
@@ -217,7 +235,7 @@ export const ShowcaseSection = () => {
                             >
                                 View Project
                                 <ArrowRight size={16} />
-                            </motion.button>
+                            </motion.a>
                             
                             {/* Auto-play Visual Indicator */}
                             {isAutoPlaying && (
@@ -252,7 +270,8 @@ export const ShowcaseSection = () => {
                                         style={{ backgroundImage: `url(${item.image})` }}
                                     />
                                     <div className="showcase-card-overlay">
-                                        <span className="showcase-card-title">{item.id.replace('-', ' ')}</span>
+                                        {/* BUG-16 FIX: /-/g replaces ALL hyphens — 'ai-calling-agent' → 'ai calling agent' */}
+                                        <span className="showcase-card-title">{item.id.replace(/-/g, ' ')}</span>
                                     </div>
                                 </div>
                             ))}

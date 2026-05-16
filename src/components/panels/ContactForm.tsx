@@ -16,8 +16,12 @@ export function ContactForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const subject = `Portfolio Inquiry from ${formData.firstName} ${formData.lastName}`;
-    const body = `Name: ${formData.firstName} ${formData.lastName}%0D%0AEmail: ${formData.email}%0D%0A%0D%0AMessage:%0D%0A${formData.message}`;
-    window.location.href = `mailto:mohsinmalik1511@gmail.com?subject=${encodeURIComponent(subject)}&body=${body}`;
+    // BUG-08 FIX: Use encodeURIComponent for ALL parts of the body, including message.
+    // Without this, special chars (&, #, +, emoji, newlines) break the mailto URI silently.
+    const bodyText = `Name: ${formData.firstName} ${formData.lastName}\r\nEmail: ${formData.email}\r\n\r\nMessage:\r\n${formData.message}`;
+    const mailtoUrl = `mailto:mohsinmalik1511@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyText)}`;
+    // Open in new tab to avoid navigating away and losing page state
+    window.open(mailtoUrl, '_blank');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

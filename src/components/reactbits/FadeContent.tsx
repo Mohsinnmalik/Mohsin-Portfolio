@@ -58,9 +58,10 @@ const FadeContent: React.FC<FadeContentProps> = ({
 
     const isMobile = window.innerWidth <= 768;
 
+    // PERF FIX: Replaced filter:blur with y offset + autoAlpha — GPU composited, zero layout reflow
     gsap.set(el, {
       autoAlpha: initialOpacity,
-      filter: blur && !isMobile ? 'blur(10px)' : 'blur(0px)',
+      y: blur ? 15 : 0,
       willChange: 'opacity, transform'
     });
 
@@ -72,7 +73,7 @@ const FadeContent: React.FC<FadeContentProps> = ({
         if (disappearAfter > 0) {
           gsap.to(el, {
             autoAlpha: initialOpacity,
-            filter: blur && !isMobile ? 'blur(10px)' : 'blur(0px)',
+            y: blur ? 15 : 0,
             delay: getSeconds(disappearAfter),
             duration: getSeconds(disappearDuration),
             ease: disappearEase,
@@ -84,7 +85,7 @@ const FadeContent: React.FC<FadeContentProps> = ({
 
     tl.to(el, {
       autoAlpha: 1,
-      filter: 'blur(0px)',
+      y: 0,
       duration: isMobile ? 0 : getSeconds(duration), // Instant appear on mobile
       ease: ease
     });

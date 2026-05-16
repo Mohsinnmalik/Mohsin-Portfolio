@@ -1,20 +1,34 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
+import type { GroupProps } from "@react-three/fiber";
 import { useGLTF, Html } from "@react-three/drei";
 import * as THREE from "three";
 import { useUIStore } from "@/store/useUIStore";
 import { DoodleHint } from "../ui/DoodleHint";
+import { useMobile } from "@/lib/hooks/useMobile";
 
-export function Model(props: any) {
+// BUG-24 FIX: Use GroupProps instead of any — typed from @react-three/fiber
+export function Model(props: GroupProps) {
   const group = useRef<THREE.Group>(null);
   const { scene } = useGLTF("/models/mohsin.glb");
   const setAiMode = useUIStore((state) => state.setAiMode);
   const aiMode = useUIStore((state) => state.aiMode);
+  // 3D: Single mobile detection — no window.innerWidth in useFrame
+  const isMobile = useMobile();
 
   const [isHolding, setIsHolding] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
+  // 3D: Pre-computed vibration offsets to avoid Math.random() inside useFrame
+  const vibrationOffsets = useMemo(() =>
+    Array.from({ length: 60 }, () => ({
+      x: (Math.random() - 0.5) * 0.05,
+      y: (Math.random() - 0.5) * 0.05,
+      z: (Math.random() - 0.5) * 0.05,
+    })), []
+  );
+  const vibrationFrame = useRef(0);
 
   const handlePointerDown = (e: any) => {
     e.stopPropagation();
@@ -32,6 +46,7 @@ export function Model(props: any) {
   };
 
   // Apply materials gracefully to fix harsh, plastic lighting
+  // 3D: useEffect is the correct place for scene traversal — NOT useMemo (scene ref mutates)
   useEffect(() => {
     if (!scene) return;
     
@@ -42,17 +57,16 @@ export function Model(props: any) {
           const mat = mesh.material as THREE.MeshStandardMaterial | THREE.MeshPhysicalMaterial;
           mat.side = THREE.DoubleSide;
           
-          mat.envMapIntensity = 0;
-          
-          if (window.innerWidth <= 768) {
+          mat.envMapIntensity = 0; // No env map used in this scene — keep at 0
+          // 3D: Use isMobile from hook, not window.innerWidth inside useEffect
+          if (isMobile) {
              mat.roughness = 1;
              mat.metalness = 0;
           } else {
-             mat.roughness = 0.95; 
+             mat.roughness = 0.95;
              mat.metalness = 0.0;
           }
           mat.flatShading = false;
-          mat.envMapIntensity = 0.0; 
           
           if (mat.color) {
             const hsl = { h: 0, s: 0, l: 0 };
@@ -64,30 +78,28 @@ export function Model(props: any) {
           
           mat.needsUpdate = true;
         }
-        const isMobile = window.innerWidth <= 768;
         mesh.castShadow = !isMobile;
         mesh.receiveShadow = !isMobile;
       }
     });
-  }, [scene]);
+  }, [scene, isMobile]);
 
   useFrame((state) => {
     if (group.current) {
       if (isHolding) {
-        // Vibration effect: random tiny offsets on XYZ
-        const xOffset = (Math.random() - 0.5) * 0.05;
-        const yOffset = (Math.random() - 0.5) * 0.05;
-        const zOffset = (Math.random() - 0.5) * 0.05;
-        group.current.position.set(xOffset, yOffset, zOffset);
+        // 3D: Vibration uses pre-computed lookup table — no Math.random() in useFrame
+        vibrationFrame.current = (vibrationFrame.current + 1) % vibrationOffsets.length;
+        const off = vibrationOffsets[vibrationFrame.current];
+        group.current.position.set(off.x, off.y, off.z);
       } else {
-        // Normal behavior
-        // Need to reset to zero since we offset it during vibration
+        // Normal behavior: lerp back to neutral
         const targetY = Math.sin(state.clock.elapsedTime * 0.8) * 0.02;
         group.current.position.y = THREE.MathUtils.lerp(group.current.position.y, targetY, 0.1);
         group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, 0, 0.1);
         group.current.position.z = THREE.MathUtils.lerp(group.current.position.z, 0, 0.1);
 
-        if (window.innerWidth > 768) {
+        // 3D: Mouse parallax disabled on mobile (Patch §3) — uses useMobile() not window.innerWidth
+        if (!isMobile) {
           const targetRotationX = (state.pointer.y * 0.1) + (Math.cos(state.clock.elapsedTime * 0.4) * 0.01);
           const targetRotationY = (state.pointer.x * 0.2) + (Math.sin(state.clock.elapsedTime * 0.4) * 0.01);
 

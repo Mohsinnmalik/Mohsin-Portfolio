@@ -1,9 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowUpRight, Github, ExternalLink } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ANIMATION, containerVariants, itemVariants } from '@/lib/animation-config';
 
 interface ShowcaseItem {
     id: string;
@@ -75,26 +77,48 @@ const SHOWCASE_DATA: ShowcaseItem[] = [
     }
 ];
 
-const ProjectCard = ({ project, index }: { project: ShowcaseItem; index: number }) => {
+// UI: Magnetic hover effect — exact math from Patch §5
+function useMagneticButton() {
+    const ref = useRef<HTMLButtonElement>(null);
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (!ref.current) return;
+        const rect = ref.current.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(ref.current, { x: x * 0.3, y: y * 0.3, duration: 0.3, ease: 'power2.out' });
+    };
+
+    const handleMouseLeave = () => {
+        if (!ref.current) return;
+        gsap.to(ref.current, { x: 0, y: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' });
+    };
+
+    return { ref, handleMouseMove, handleMouseLeave };
+}
+
+const ProjectCard = ({ project }: { project: ShowcaseItem }) => {
+    // UI: Magnetic effect on the CTA button (Patch §5 — exact spec)
+    const magnetic = useMagneticButton();
+
     return (
+        // UI: itemVariants provides staggered entrance — no blur, scale+opacity only
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.8, delay: index * 0.1, ease: [0.21, 1.11, 0.81, 0.99] }}
+            variants={itemVariants}
             className="group relative flex flex-col bg-[#0f1525] rounded-[2.5rem] overflow-hidden border border-white/5 hover:border-orange-500/30 transition-all duration-500 shadow-2xl"
+            style={{ willChange: 'transform, opacity' }}
         >
             {/* Image Section */}
             <div className="relative aspect-[16/10] overflow-hidden">
-                <Image 
-                    src={project.image} 
+                <Image
+                    src={project.image}
                     alt={project.headline}
                     width={800}
                     height={500}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f1525] via-transparent to-transparent opacity-60" />
-                
+
                 {/* Floating Tech Tags (Overlay) */}
                 <div className="absolute top-6 left-6 flex flex-wrap gap-2">
                     {project.tech.map((tag) => (
@@ -131,8 +155,15 @@ const ProjectCard = ({ project, index }: { project: ShowcaseItem; index: number 
                             <ExternalLink size={18} />
                         </a>
                     </div>
-                    
-                    <button className="flex items-center gap-2 group/btn text-orange-500 font-bold text-xs uppercase tracking-[0.2em] hover:text-orange-400 transition-colors">
+
+                    {/* UI: Magnetic CTA button — warps toward cursor on hover (Patch §5) */}
+                    <button
+                        ref={magnetic.ref}
+                        onMouseMove={magnetic.handleMouseMove}
+                        onMouseLeave={magnetic.handleMouseLeave}
+                        className="flex items-center gap-2 group/btn text-orange-500 font-bold text-xs uppercase tracking-[0.2em] hover:text-orange-400 transition-colors"
+                        style={{ willChange: 'transform' }}
+                    >
                         View Details
                         <ArrowUpRight size={16} className="group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
                     </button>
@@ -149,11 +180,18 @@ export const ProjectsGrid = () => {
     return (
         <section id="projects" className="bg-[#0a0f1d] pb-32 pt-10">
             <div className="container mx-auto px-6 max-w-7xl">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-14">
-                    {SHOWCASE_DATA.map((project, index) => (
-                        <ProjectCard key={project.id} project={project} index={index} />
+                {/* UI: containerVariants drives staggerChildren — cards animate in sequence, not all at once */}
+                <motion.div
+                    variants={containerVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "-80px" }}
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-14"
+                >
+                    {SHOWCASE_DATA.map((project) => (
+                        <ProjectCard key={project.id} project={project} />
                     ))}
-                </div>
+                </motion.div>
             </div>
         </section>
     );

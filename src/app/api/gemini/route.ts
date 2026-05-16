@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     // Use regular server-only env variable, NEVER NEXT_PUBLIC_ for secret keys
-    const apiKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       console.error("Missing Gemini API Key in environment variables.");

@@ -37,3 +37,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# BUG-22 FIX: Exclude dev/debug artifacts committed by mistake
+build_output*.txt
+eslint_report.json
+*.tmp
+*.log
+git_status*.txt
