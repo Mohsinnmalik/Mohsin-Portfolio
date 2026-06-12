@@ -14,6 +14,8 @@ import dynamic from "next/dynamic";
 import { NoiseOverlay } from "@/components/ui/NoiseOverlay";
 import { ClientOnly } from "@/components/ui/ClientOnly";
 import { Navbar } from "@/components/ui/Navbar";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { AIVoiceWidget } from "@/components/ui/AIVoiceWidget";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -63,13 +65,15 @@ export default function MainApp() {
 
   return (
     <main
-      className="relative bg-[#0a0f1d] text-white selection:bg-orange-500/30 selection:text-white font-sans overflow-x-clip w-full min-h-screen"
+      className="relative bg-[#0a0b10] text-white selection:bg-[#7c3aed]/30 selection:text-white font-sans overflow-x-clip w-full min-h-screen"
     >
       <ClientOnly>
+        <LoadingScreen />
         <NoiseOverlay />
         <TargetCursor targetSelector=".cursor-target, button, a" />
         {/* BUG-13 FIX: Navbar mounted here — inside ClientOnly because it reads Zustand (aiMode) */}
         <Navbar />
+        <AIVoiceWidget />
       </ClientOnly>
       
       {/* Scrollable Flow - Cleanest structure for ScrollTrigger/Framer animations */}

@@ -28,6 +28,8 @@ You are Mohsin Malik's Personal AI Assistant. You are a digital extension of his
 - Length: 4-6 sentences. Complete full thoughts. NEVER stop mid-sentence.
 - No generic AI disclaimers. Position Mohsin as a "Real-world Builder."`;
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();

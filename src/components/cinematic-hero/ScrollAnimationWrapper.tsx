@@ -6,11 +6,13 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useUIStore } from "@/store/useUIStore";
+import { useMobile } from "@/lib/hooks/useMobile";
 
 export function ScrollAnimationWrapper({ children, containerRef }: { children: React.ReactNode, containerRef: React.RefObject<HTMLDivElement> }) {
   const { camera } = useThree();
   const groupRef = useRef<THREE.Group>(null);
   const aiMode = useUIStore((state) => state.aiMode);
+  const isMobile = useMobile();
   
   // Track GSAP's intended values
   const gsapGroupPos = useRef(new THREE.Vector3(0, 0, 0));
@@ -18,6 +20,25 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
   const gsapCamPos = useRef(new THREE.Vector3(0, 1.2, 2.5));
 
   useLayoutEffect(() => {
+    // 3D Mobile/Desktop Frame Initialization to prevent position snapping/jumps on reload
+    if (isMobile) {
+      gsapGroupPos.current.set(0, 0.55, 0);
+      gsapCamPos.current.set(0, 0.9, 2.7);
+      camera.position.set(0, 0.9, 2.7);
+      if (groupRef.current) {
+        groupRef.current.position.set(0, 0.55, 0);
+        groupRef.current.scale.set(1.15, 1.15, 1.15);
+      }
+    } else {
+      gsapGroupPos.current.set(0, 0, 0);
+      gsapCamPos.current.set(0, 1.2, 2.5);
+      camera.position.set(0, 1.2, 2.5);
+      if (groupRef.current) {
+        groupRef.current.position.set(0, 0, 0);
+        groupRef.current.scale.set(1, 1, 1);
+      }
+    }
+
     gsap.registerPlugin(ScrollTrigger);
     
     // Only apply complex scroll on desktop
@@ -72,9 +93,10 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
     mm.add("(max-width: 767px)", () => {
         if (!groupRef.current || !containerRef.current) return;
         
-        gsap.set(groupRef.current.scale, { x: 0.9, y: 0.9, z: 0.9 });
-        gsap.set(gsapGroupPos.current, { y: -0.2 }); 
-        gsap.set(gsapCamPos.current, { z: 3.5 }); 
+        // Scale and frame the model to position the face in the upper-middle viewport
+        gsap.set(groupRef.current.scale, { x: 1.15, y: 1.15, z: 1.15 });
+        gsap.set(gsapGroupPos.current, { x: 0, y: 0.55, z: 0 }); 
+        gsap.set(gsapCamPos.current, { x: 0, y: 0.9, z: 2.7 }); 
         
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -100,7 +122,7 @@ export function ScrollAnimationWrapper({ children, containerRef }: { children: R
     return () => {
       mm.revert(); 
     };
-  }, [containerRef]);
+  }, [containerRef, isMobile, camera]);
 
   // Continuously apply either GSAP's intended state, or the AI Mode state
   useFrame(() => {

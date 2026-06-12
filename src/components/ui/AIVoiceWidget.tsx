@@ -1,7 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/store/useUIStore";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Mic, X, Terminal, Activity } from "lucide-react";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
@@ -238,102 +238,103 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
   };
 
   return (
-    <AnimatePresence>
-      {aiMode && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: "easeInOut" }} 
-          className="fixed inset-0 z-50 pointer-events-none flex flex-col items-center justify-end pb-8 px-6 md:pb-12"
-        >
+    <div
+      aria-hidden={!aiMode}
+      className="fixed inset-0 z-50 flex flex-col items-center justify-end pb-8 px-6 md:pb-12"
+      style={{
+        opacity: aiMode ? 1 : 0,
+        pointerEvents: aiMode ? "auto" : "none",
+        transition: "opacity 0.8s ease-in-out",
+      }}
+    >
           {/* Subtle Dark Vignette Overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/40 to-black/90 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-transparent via-black/50 to-black/95 pointer-events-none" />
 
           {/* Error Banner — floating card, NOT inset-0 so it never blocks the mic */}
           {hasError && msgCount >= MAX_MESSAGES && (
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20
-              flex flex-col items-center gap-4 pointer-events-auto
-              bg-[#0a0f1d]/95 backdrop-blur-xl rounded-3xl border border-orange-500/20
-              px-8 py-8 max-w-sm w-[90vw] text-center shadow-2xl">
-              <p className="text-white/70 text-base font-light">
+              flex flex-col items-center gap-4
+              bg-[#0a0b10] border-3 border-black text-center shadow-[6px_6px_0px_#7c3aed]
+              px-8 py-8 max-w-sm w-[90vw]">
+              <div className="font-mono text-xs uppercase tracking-widest text-[#7c3aed] mb-2">[LIMIT_EXCEEDED]</div>
+              <p className="text-white/80 text-sm font-mono leading-relaxed">
                 Session limit reached (10 messages). Come back tomorrow or reach out directly!
               </p>
               <a
-                href="mailto:mohsin@codeflux.dev"
-                className="px-6 py-3 rounded-xl bg-orange-500/10 border border-orange-500/50 text-orange-400 font-bold text-sm tracking-wide hover:bg-orange-500/20 transition-all"
+                href="mailto:mohsin@codeflux.social"
+                className="w-full mt-2 py-3 border-3 border-black bg-[#7c3aed] text-white hover:bg-[#6d28d9] font-mono font-bold text-xs uppercase tracking-wider shadow-[4px_4px_0px_#000] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_#000] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000] transition-all"
               >
-                Drop me an email instead →
+                Send Email Protocol
               </a>
-              {/* BUG-09 FIX: Removed 'Reset session' button — it let users trivially bypass
-                  the 10-message rate limit with a single click */}
             </div>
           )}
 
           {/* Rate limit soft notice — small floating badge, doesn't block anything */}
           {msgCount >= MAX_MESSAGES && !hasError && (
-            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/30 pointer-events-none">
-              <span className="text-orange-400 text-xs font-mono tracking-widest">
-                10/10 messages used this session
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 px-4 py-2 bg-[#0c0d14] border-2 border-black shadow-[3px_3px_0px_#7c3aed] pointer-events-none">
+              <span className="text-white text-xs font-mono tracking-widest">
+                [SYSTEM::COMMS::10_OF_10_LIMIT]
               </span>
             </div>
           )}
 
           {/* Exit Button - Top Right */}
-          <div className="absolute top-8 right-8 pointer-events-auto">
+          <div className="absolute top-8 right-8">
             <button
               onClick={() => {
-                if (forceShow) window.location.href = '/'; 
-                else setAiMode(false);
+                setAiMode(false);
               }}
-              className="group flex flex-col items-center gap-2 text-white/40 hover:text-white transition-colors duration-300"
+              type="button"
+              aria-label="Exit AI assistant"
+              className="group flex items-center gap-2 bg-[#7c3aed] hover:bg-[#6d28d9] text-white border-2 border-black font-mono text-xs font-bold px-4 py-2 shadow-[4px_4px_0px_#000] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_#000] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000] transition-all duration-150"
             >
-              <span className="w-12 h-12 rounded-full border border-white/10 bg-white/5 backdrop-blur-md flex items-center justify-center group-hover:bg-white/10 group-hover:scale-105 transition-all">
-                <X size={20} />
-              </span>
-              <span className="text-[10px] uppercase tracking-widest font-mono">Exit AI</span>
+              <X size={16} />
+              <span>TERMINATE_COMMS</span>
             </button>
           </div>
 
           {/* Cinematic AI Conversation Log */}
-          <div className="relative z-10 w-full max-w-4xl flex flex-col items-center h-[55vh] pointer-events-auto">
-            
+          <div className="relative z-10 w-full max-w-4xl flex flex-col items-center h-[52vh]">
             <div 
               ref={scrollRef}
-              className="w-full flex-1 overflow-y-auto px-4 py-8 custom-scrollbar space-y-12"
+              className="w-full flex-1 overflow-y-auto px-4 py-8 space-y-8 scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-transparent"
               style={{ maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)' }}
               suppressHydrationWarning
             >
               {history.map((msg, i) => (
                 <motion.div
                   key={i}
-                  // PERF FIX: Replaced filter:blur(8px) with y+opacity — GPU composited only
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
+                  transition={{ duration: 0.6, ease: "easeOut" }}
                   style={{ willChange: 'transform, opacity' }}
-                  className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} max-w-full`}
+                  className={`flex flex-col ${msg.type === 'user' ? 'items-end' : 'items-start'} w-full`}
                 >
                   {msg.type === 'user' ? (
-                    <div className="flex flex-col items-end gap-2">
-                       <span className="text-[10px] font-mono text-white/30 tracking-[0.3em] uppercase">User Input</span>
-                       <div className="text-xl md:text-2xl font-mono text-white/60 text-right leading-relaxed italic">
-                         <span>&quot;{msg.text}&quot;</span>
-                       </div>
+                    <div className="flex flex-col items-end w-full max-w-xl">
+                      <div className="flex items-center justify-between border-2 border-b-0 border-black bg-black/60 px-3 py-1 font-mono text-[9px] text-[#00f0ff]/80 w-full rounded-t">
+                        <span>[USER_COMMS::OUTBOUND]</span>
+                        <span>SECURE_CH</span>
+                      </div>
+                      <div className="p-4 bg-[#11131e] border-2 border-black rounded-b shadow-[4px_4px_0px_#00f0ff] w-full text-sm font-mono text-slate-100">
+                        &quot;{msg.text}&quot;
+                      </div>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-start gap-3">
-                       <span className="text-[10px] font-mono text-orange-500/60 tracking-[0.3em] uppercase">Mohsin AI</span>
-                       <div className="text-2xl md:text-4xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] content-glow">
-                         <span>{msg.text}</span>
-                       </div>
+                    <div className="flex flex-col items-start w-full max-w-2xl">
+                      <div className="flex items-center justify-between border-2 border-b-0 border-black bg-black/60 px-3 py-1 font-mono text-[9px] text-[#7c3aed]/80 w-full rounded-t">
+                        <span>[SYSTEM_AI::INBOUND]</span>
+                        <span>ONLINE</span>
+                      </div>
+                      <div className="p-4 bg-[#0c0d14] border-2 border-black rounded-b shadow-[4px_4px_0px_#7c3aed] w-full text-sm md:text-base text-slate-200 leading-relaxed font-sans">
+                        {msg.text}
+                      </div>
                     </div>
                   )}
                 </motion.div>
               ))}
 
-              {/* AI: Live streaming display — shows tokens as they arrive before committing to history */}
-              {/* This only shows when aiResponse is actively being streamed (not yet in history) */}
+              {/* AI: Live streaming display */}
               {aiResponse !== "Awaiting voice input..." &&
                 aiResponse !== "Analyzing..." &&
                 !history.some(m => m.type === 'ai' && m.text === aiResponse) && (
@@ -341,90 +342,147 @@ export function AIVoiceWidget({ forceShow = false }: { forceShow?: boolean }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="flex flex-col items-start gap-3"
+                  className="flex flex-col items-start w-full max-w-2xl"
                   style={{ willChange: 'transform, opacity' }}
                 >
-                  <span className="text-[10px] font-mono text-orange-500/60 tracking-[0.3em] uppercase">Mohsin AI ▊</span>
-                  <div className="text-2xl md:text-4xl font-light text-white/95 leading-tight tracking-wide drop-shadow-[0_0_20px_rgba(255,255,255,0.15)] content-glow">
+                  <div className="flex items-center justify-between border-2 border-b-0 border-black bg-black/60 px-3 py-1 font-mono text-[9px] text-[#7c3aed]/80 w-full rounded-t">
+                    <span>[SYSTEM_AI::STREAMING]</span>
+                    <span className="animate-pulse">▊ COMPILING</span>
+                  </div>
+                  <div className="p-4 bg-[#0c0d14] border-2 border-black rounded-b shadow-[4px_4px_0px_#7c3aed] w-full text-sm md:text-base text-slate-200 leading-relaxed font-sans">
                     <span>{aiResponse}</span>
-                    {/* Blinking cursor while streaming */}
-                    <span className="inline-block w-0.5 h-8 bg-orange-400 ml-1 animate-pulse align-middle" />
+                    <span className="inline-block w-2 h-4 bg-[#00f0ff] ml-1 animate-pulse align-middle" />
                   </div>
                 </motion.div>
               )}
 
-              {/* Dynamic Analyzing State — shown while waiting for first token */}
+              {/* Dynamic Analyzing State */}
               {aiResponse === "Analyzing..." && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="flex flex-col items-start gap-3"
+                  className="flex flex-col items-start w-full max-w-md"
                 >
-                  <span className="text-[10px] font-mono text-orange-500/60 tracking-[0.3em] uppercase">System</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl font-light text-white/40 italic">Generating response</span>
-                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5 }} className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.3 }} className="w-1.5 h-1.5 rounded-full bg-orange-500" />
-                    <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ repeat: Infinity, duration: 1.5, delay: 0.6 }} className="w-1.5 h-1.5 rounded-full bg-orange-500" />
+                  <div className="flex items-center gap-2 border-2 border-black bg-black/60 px-3 py-2 font-mono text-[10px] text-[#7c3aed]/80 shadow-[4px_4px_0px_#000] w-full rounded">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#7c3aed] animate-ping" />
+                    <span>COMPUTING_RESPONSE_MATRIX...</span>
                   </div>
                 </motion.div>
               )}
             </div>
           </div>
 
+          {/* Live Audio Waveform Visualizer */}
+          <AudioWaveform isSpeaking={isSpeaking} isListening={isListening} />
+
           {/* Glowing System Status Banner */}
-          <div className="relative z-10 flex items-center gap-3 mb-8 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md">
+          <div className="relative z-10 flex items-center gap-3 mb-6 px-4 py-1.5 bg-[#0a0b10] border-2 border-black shadow-[3px_3px_0px_#000]">
             <div className="relative flex h-2 w-2">
-              <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${isSpeaking ? 'bg-blue-400 animate-ping' : (isListening ? 'bg-red-400 animate-ping' : 'bg-orange-500 animate-pulse')}`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${isSpeaking ? 'bg-blue-500' : (isListening ? 'bg-red-500' : 'bg-orange-500')}`}></span>
+              <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${isSpeaking ? 'bg-[#00f0ff] animate-ping' : (isListening ? 'bg-red-400 animate-ping' : 'bg-[#7c3aed] animate-pulse')}`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${isSpeaking ? 'bg-[#00f0ff]' : (isListening ? 'bg-red-500' : 'bg-[#7c3aed]')}`}></span>
             </div>
-            <span className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isSpeaking ? 'text-blue-400' : (isListening ? 'text-red-400' : 'text-orange-400')}`}>
-              <span>{isSpeaking ? 'AI Speaking' : (isListening ? 'Receiving Audio' : 'Awaiting Input')}</span>
+            <span className={`text-[10px] font-mono uppercase tracking-[0.2em] font-bold ${isSpeaking ? 'text-[#00f0ff]' : (isListening ? 'text-red-400' : 'text-[#7c3aed]')}`}>
+              <span>{isSpeaking ? 'SYS_SPEAKING' : (isListening ? 'RECEIVING_COMMS' : 'LINK_AWAITING_INPUT')}</span>
             </span>
           </div>
 
           {/* Hold to Speak Interaction Ring */}
-          <div className="relative z-10 flex items-center justify-center pointer-events-auto group">
-            
-            {isListening && (
-              <>
-                <motion.div animate={{ scale: [1, 1.8], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }} className="absolute w-20 h-20 rounded-full border border-red-500/50" />
-                <motion.div animate={{ scale: [1, 2.5], opacity: [0.3, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut", delay: 0.2 }} className="absolute w-20 h-20 rounded-full border border-red-500/30" />
-              </>
-            )}
-            {isSpeaking && (
-              <>
-                <motion.div animate={{ scale: [1, 1.3, 1], rotate: [0, 180, 360] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className="absolute w-24 h-24 rounded-full border-t border-b border-blue-500/40" />
-              </>
-            )}
-
-            <button
-              onClick={handleToggleListening}
-              className={`relative z-10 w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 touch-none select-none backdrop-blur-xl ${
-                isListening
-                  ? "bg-red-500/10 border-2 border-red-500 shadow-[0_0_40px_rgba(239,68,68,0.5)] scale-90"
-                  : isSpeaking
-                    ? "bg-blue-500/10 border border-blue-500/50"
-                    : "bg-white/5 border border-white/20 hover:border-orange-500/50 hover:scale-105 cursor-pointer"
-              }`}
-            >
-              {isListening ? (
-                <Activity size={28} className="text-red-500 animate-pulse" />
-              ) : (
-                <Mic size={28} className={isSpeaking ? "text-blue-400" : "text-white/70 group-hover:text-orange-400 transition-colors"} />
+          <div className="relative z-10 flex flex-col items-center justify-center group">
+            <div className="relative flex items-center justify-center">
+              {/* Concentric rotating tech rings */}
+              <div className="absolute w-32 h-32 rounded-full border border-dashed border-[#7c3aed]/20 animate-spin" style={{ animationDuration: '25s' }} />
+              <div className="absolute w-26 h-26 rounded-full border border-dashed border-[#00f0ff]/30 animate-spin" style={{ animationDuration: '12s', animationDirection: 'reverse' }} />
+              
+              {isListening && (
+                <>
+                  <motion.div animate={{ scale: [1, 1.8], opacity: [0.5, 0] }} transition={{ repeat: Infinity, duration: 1.5, ease: "easeOut" }} className="absolute w-20 h-20 rounded-full border border-red-500/50" />
+                  <motion.div animate={{ scale: [1, 2.4], opacity: [0.3, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut", delay: 0.2 }} className="absolute w-20 h-20 rounded-full border border-red-500/30" />
+                </>
               )}
-            </button>
+              {isSpeaking && (
+                <>
+                  <motion.div animate={{ scale: [1, 1.25, 1], rotate: [0, 180, 360] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className="absolute w-24 h-24 rounded-full border-t-2 border-b-2 border-[#00f0ff]/60" />
+                </>
+              )}
+
+              <button
+                onClick={handleToggleListening}
+                className={`relative z-10 w-20 h-20 rounded-full flex items-center justify-center transition-all duration-300 touch-none select-none backdrop-blur-xl border-3 border-black shadow-[4px_4px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_#000] ${
+                  isListening
+                    ? "bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.4)]"
+                    : isSpeaking
+                      ? "bg-[#00f0ff] text-black shadow-[0_0_30px_rgba(0,240,255,0.4)]"
+                      : "bg-[#7c3aed] text-white hover:bg-[#6d28d9] cursor-pointer"
+                }`}
+              >
+                {isListening ? (
+                  <Activity size={28} className="animate-pulse" />
+                ) : (
+                  <Mic size={28} className={isSpeaking ? "animate-bounce" : "group-hover:scale-110 transition-transform"} />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Transcript Guide */}
           <div className="h-[30px] mt-4 flex items-center justify-center w-full z-10">
-             <div className="text-[10px] font-mono tracking-widest text-white/20 uppercase">
-               <span>{transcript ? transcript : (isListening ? "Tap to stop listening..." : "Tap to speak")}</span>
+             <div className="text-[10px] font-mono tracking-widest text-white/40 uppercase font-bold">
+               <span>{transcript ? transcript : (isListening ? "STOPPING_CAPTURE" : "INITIALIZE_VOICE_LINK")}</span>
              </div>
           </div>
 
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </div>
+  );
+}
+
+// Sub-component for premium live audio wave visualizer
+function AudioWaveform({ isSpeaking, isListening }: { isSpeaking: boolean; isListening: boolean }) {
+  const barCount = 24;
+  return (
+    <div className="flex items-end justify-center gap-1.5 h-10 w-64 px-4 my-4 select-none">
+      {Array.from({ length: barCount }).map((_, i) => {
+        const duration = 0.4 + Math.random() * 0.6;
+        const delay = i * 0.035;
+        let scaleYRange = [0.15, 0.15];
+        let color = "rgba(124, 58, 237, 0.25)"; // idle purple-gray
+        let shadow = "none";
+
+        if (isListening) {
+          scaleYRange = [0.15, 0.9, 0.2, 1.0, 0.15];
+          color = "#ef4444"; // red
+          shadow = "0 0 8px rgba(239, 68, 68, 0.5)";
+        } else if (isSpeaking) {
+          scaleYRange = [0.1, 0.75, 0.15, 0.95, 0.1];
+          color = "#00f0ff"; // cyber cyan
+          shadow = "0 0 8px rgba(0, 240, 255, 0.5)";
+        }
+
+        return (
+          <motion.div
+            key={i}
+            className="w-1.5 rounded-full"
+            animate={isListening || isSpeaking ? {
+              scaleY: scaleYRange,
+            } : {
+              scaleY: 0.15
+            }}
+            transition={{
+              duration: duration,
+              repeat: Infinity,
+              repeatType: "mirror",
+              delay: delay,
+              ease: "easeInOut"
+            }}
+            style={{
+              height: "100%",
+              backgroundColor: color,
+              boxShadow: shadow,
+              transformOrigin: "bottom",
+              willChange: "transform"
+            }}
+          />
+        );
+      })}
+    </div>
   );
 }

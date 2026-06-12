@@ -10,6 +10,7 @@ node_modules/
 
 # next.js
 /.next/
+/.next-build/
 /out/
 
 # production
@@ -38,9 +39,25 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# BUG-22 FIX: Exclude dev/debug artifacts committed by mistake
+# dev/debug artifacts
 build_output*.txt
+build_log*.txt
+build.log
 eslint_report.json
+eslint_errors.txt
+eslint-errors.txt
+compile_errors.txt
+lint_results*.txt
+tsc_report.txt
+debug_transcript.txt
+full_status*.txt
+status_list*.tmp
+git_status*.txt
 *.tmp
 *.log
-git_status*.txt
+
+# IDE
+.vscode/
+
+# Python venv (rembg tool)
+.venv_rembg/

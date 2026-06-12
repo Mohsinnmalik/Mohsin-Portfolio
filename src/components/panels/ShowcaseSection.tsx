@@ -11,7 +11,7 @@ const SHOWCASE_DATA = [
         subheading: "EdTech Startup Platform",
         headline: "CODEFLUX",
         image: "/images/showcase/codeflux-hero.png",
-        url: "https://codeflux.dev",
+        url: "https://codeflux.social",
         description: "Founded and built an AI-focused EdTech platform delivering real-world tech workshops, AI training sessions, and digital learning solutions. Designed full-stack SaaS architecture, managed deployments, and generated real revenue through tech initiatives.",
         tech: ["Next.js", "Node.js", "MongoDB", "AI Tools", "Vercel"]
     },
@@ -55,7 +55,7 @@ const SHOWCASE_DATA = [
         id: "ai-calling-agent",
         subheading: "AI Voice Automation",
         headline: "AI CALLING AGENT",
-        image: "/images/showcase/ai-calling-agent.png",
+        image: "/images/showcase/codeflux-hero.png",
         url: "https://github.com/Mohsinnmalik",
         description: "Built an AI-powered voice assistant capable of automating conversational workflows such as business outreach and user interaction handling. Integrated speech processing and intelligent response generation.",
         tech: ["Python", "AI APIs", "Voice APIs"]
@@ -67,16 +67,15 @@ export const ShowcaseSection = () => {
     const [isAutoPlaying, setIsAutoPlaying] = useState(true);
     const carouselRef = useRef<HTMLDivElement>(null);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-    // BUG-11 FIX: Track resume timer so it can be cleared when user interacts again
     const resumeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-    const activeItem = SHOWCASE_DATA[activeIndex];
+    const activeItem = SHOWCASE_DATA.at(activeIndex) ?? SHOWCASE_DATA[0];
 
     const startTimer = () => {
         if (timerRef.current) clearInterval(timerRef.current);
         timerRef.current = setInterval(() => {
             setActiveIndex((prev) => (prev + 1) % SHOWCASE_DATA.length);
-        }, 7000); // 7-second timer as requested
+        }, 7000);
     };
 
     const stopTimer = () => {
@@ -88,12 +87,11 @@ export const ShowcaseSection = () => {
             startTimer();
         }
         return () => stopTimer();
-    }, [isAutoPlaying]); // Re-run when play state changes
+    }, [isAutoPlaying]);
 
     const handleNext = () => {
         setIsAutoPlaying(false);
         setActiveIndex((prev) => (prev + 1) % SHOWCASE_DATA.length);
-        // BUG-11 FIX: Resume auto-play after 10s of user inactivity
         if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
         resumeTimerRef.current = setTimeout(() => setIsAutoPlaying(true), 10000);
     };
@@ -112,10 +110,9 @@ export const ShowcaseSection = () => {
         resumeTimerRef.current = setTimeout(() => setIsAutoPlaying(true), 10000);
     };
 
-    // Auto-scroll carousel active item into view
     useEffect(() => {
         if (carouselRef.current) {
-            const activeCard = carouselRef.current.children[activeIndex] as HTMLElement;
+            const activeCard = Array.from(carouselRef.current.children).at(activeIndex) as HTMLElement;
             if (activeCard) {
                 const scrollLeft = activeCard.offsetLeft - carouselRef.current.offsetWidth / 2 + activeCard.offsetWidth / 2;
                 carouselRef.current.scrollTo({
@@ -130,24 +127,24 @@ export const ShowcaseSection = () => {
         <section className="showcase-wrapper" id="projects">
             <div className="flex flex-col items-center w-full">
                 {/* Section Heading */}
-                <div className="mb-10 text-center">
+                <div className="mb-10 text-center select-none">
                     <motion.h2 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="text-xs uppercase tracking-[0.5em] text-slate-500 font-bold mb-3"
+                        className="text-xs uppercase tracking-[0.5em] text-[#00f0ff] font-mono font-bold mb-3"
                     >
-                        Portfolio
+                        {"Portfolio"}
                     </motion.h2>
                     <motion.h3 
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8, delay: 0.1 }}
-                        className="text-3xl md:text-5xl font-bold text-white tracking-tight"
+                        className="text-3xl md:text-5xl font-extrabold text-white tracking-tight font-display"
                     >
-                        My Projects
+                        {"My Projects"}
                     </motion.h3>
                 </div>
 
@@ -160,15 +157,12 @@ export const ShowcaseSection = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                transition={{ duration: 1.2, ease: "easeInOut" }} // Netflix-style smooth fade
+                                transition={{ duration: 1.2, ease: "easeInOut" }}
                                 className="showcase-bg"
                                 style={{ backgroundImage: `url(${activeItem.image})` }}
                             />
                         </AnimatePresence>
                     </div>
-
-                    {/* Overlay Layer */}
-                    <div className="showcase-overlay" />
 
                     {/* Main Content Area */}
                     <div className="showcase-content">
@@ -208,7 +202,7 @@ export const ShowcaseSection = () => {
                             </motion.div>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 mb-8">
+                        <div className="flex flex-wrap gap-2 mb-8 select-none">
                             {activeItem.tech.map((tag, i) => (
                                 <motion.span
                                     key={`${activeItem.id}-${tag}`}
@@ -233,7 +227,7 @@ export const ShowcaseSection = () => {
                                 transition={{ duration: 0.4, delay: 0.4 }}
                                 className="showcase-cta"
                             >
-                                View Project
+                                {"View Project"}
                                 <ArrowRight size={16} />
                             </motion.a>
                             
@@ -242,14 +236,14 @@ export const ShowcaseSection = () => {
                                 <motion.div 
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
-                                    className="hidden md:block w-32 h-1 bg-white/10 rounded-full overflow-hidden"
+                                    className="hidden md:block w-32 h-2 bg-slate-200 border-2 border-black rounded-none overflow-hidden"
                                 >
                                     <motion.div 
                                         key={activeIndex}
                                         initial={{ width: "0%" }}
                                         animate={{ width: "100%" }}
                                         transition={{ duration: 7, ease: "linear" }}
-                                        className="h-full bg-[#f97316]"
+                                        className="h-full bg-[#7c3aed]"
                                     />
                                 </motion.div>
                             )}
@@ -270,7 +264,6 @@ export const ShowcaseSection = () => {
                                         style={{ backgroundImage: `url(${item.image})` }}
                                     />
                                     <div className="showcase-card-overlay">
-                                        {/* BUG-16 FIX: /-/g replaces ALL hyphens — 'ai-calling-agent' → 'ai calling agent' */}
                                         <span className="showcase-card-title">{item.id.replace(/-/g, ' ')}</span>
                                     </div>
                                 </div>

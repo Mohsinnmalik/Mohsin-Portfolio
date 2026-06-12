@@ -1,9 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Fira_Code } from "next/font/google";
+import { Space_Grotesk, Lexend, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const firaCode = Fira_Code({ subsets: ["latin"], variable: "--font-fira-code" });
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
+const lexend = Lexend({ subsets: ["latin"], variable: "--font-lexend" });
+const spaceMono = Space_Mono({ weight: ["400", "700"], subsets: ["latin"], variable: "--font-space-mono" });
 
 // SEO: Canonical URL updated to live Vercel deployment
 const SITE_URL = "https://mohsin-portfolio-orpin.vercel.app";
@@ -60,7 +61,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   // BUG-25 FIX: Removed maximumScale:1 and userScalable:false
   // These violate WCAG 2.1 SC 1.4.4 — users with visual impairments need pinch-to-zoom
-  themeColor: "#0a0f1d",
+  themeColor: "#0a0b10",
 };
 
 // SEO: JSON-LD Person schema for Google Knowledge Panel eligibility
@@ -97,8 +98,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark scroll-smooth" suppressHydrationWarning>
-      <body className={`${inter.variable} ${firaCode.variable} font-sans antialiased bg-black text-white relative`} suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body className={`${spaceGrotesk.variable} ${lexend.variable} ${spaceMono.variable} font-sans antialiased bg-[#0a0b10] text-white relative`} suppressHydrationWarning>
         {/* SEO: JSON-LD structured data for Google Knowledge Panel */}
         <script
           type="application/ld+json"

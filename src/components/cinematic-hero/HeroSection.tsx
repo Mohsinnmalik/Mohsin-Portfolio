@@ -15,6 +15,7 @@ import { useReducedMotion } from "@/lib/hooks/useReducedMotion";
 
 export function HeroSection() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const coordsRef = useRef<HTMLSpanElement>(null);
   const aiMode = useUIStore((state) => state.aiMode);
   const [isMounted, setIsMounted] = useState(false);
   const [isResumeOpen, setIsResumeOpen] = useState(false);
@@ -87,10 +88,27 @@ export function HeroSection() {
     return () => ctx.revert();
   }, []);
 
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (containerRef.current) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      containerRef.current.style.setProperty('--mouse-x', `${x}%`);
+      containerRef.current.style.setProperty('--mouse-y', `${y}%`);
+      
+      if (coordsRef.current) {
+        coordsRef.current.innerText = `X: ${Math.round(e.clientX)}px | Y: ${Math.round(e.clientY)}px`;
+      }
+    }
+  };
+
   return (
     <section 
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-slate-950"
+      onMouseMove={handleMouseMove}
+      className={`relative w-full h-screen overflow-hidden transition-colors duration-1000 flex flex-col justify-between border-b-4 border-black ${
+        aiMode ? "bg-[#05070f]" : "bg-[#0a0b10]"
+      }`}
     >
       {/* Cinematic Exit Transition — scale + blur + fade-to-black as user scrolls away */}
       {/* The whole scene scales up and blurs (depth-of-field pull) then goes dark */}
@@ -105,132 +123,152 @@ export function HeroSection() {
         className="absolute inset-0 w-full h-full"
         style={{
           scale: prefersReduced ? 1 : heroScale,
-          filter: prefersReduced ? undefined : heroFilter,
-          transformOrigin: 'center center',
+          filter: prefersReduced ? "none" : heroFilter,
           willChange: 'transform, filter',
           transform: 'translateZ(0)',
         }}
       >
-      {/* Background Gradient */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{ background: "radial-gradient(circle at center, #0f172a 0%, #020617 100%)" }}
-      />
+          {/* Corner frame borders */}
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-white/20 pointer-events-none select-none z-25"></div>
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-white/20 pointer-events-none select-none z-25"></div>
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-white/20 pointer-events-none select-none z-25"></div>
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-white/20 pointer-events-none select-none z-25"></div>
+
+          {/* Corner crosshair indicators for technical blueprint design */}
+          <div className="absolute top-4 left-4 font-mono text-xs text-[#7c3aed]/40 pointer-events-none select-none z-25 font-bold">+</div>
+          <div className="absolute top-4 right-4 font-mono text-xs text-[#00f0ff]/40 pointer-events-none select-none z-25 font-bold">+</div>
+          <div className="absolute bottom-4 left-4 font-mono text-xs text-[#00f0ff]/40 pointer-events-none select-none z-25 font-bold">+</div>
+          <div className="absolute bottom-4 right-4 font-mono text-xs text-[#7c3aed]/40 pointer-events-none select-none z-25 font-bold">+</div>
+
+          {/* Grid Coordinates display in bottom left corner */}
+          <div className="absolute bottom-6 left-6 font-mono text-[9px] md:text-xs border border-white/10 bg-[#0c0d14]/60 text-white/60 px-2.5 py-1.5 backdrop-blur-sm pointer-events-none select-none z-25 tracking-wider shadow-[2px_2px_0px_#7c3aed]">
+            <span ref={coordsRef}>X: --px | Y: --px</span>
+          </div>
+
+        {/* Background Pattern: Retro dot grid */}
+        <div 
+          className="absolute inset-0 z-0 transition-all duration-1000"
+          style={{ 
+            backgroundImage: aiMode 
+              ? "radial-gradient(rgba(0, 240, 255, 0.2) 1.5px, transparent 1.5px)" 
+              : "radial-gradient(rgba(124, 58, 237, 0.2) 1.5px, transparent 1.5px)", 
+            backgroundSize: "24px 24px",
+            opacity: 0.35
+          }}
+        />
+
+        {/* Interactive Spotlight Radial Glow */}
+        <div 
+          className="absolute inset-0 z-0 pointer-events-none transition-all duration-500"
+          style={{
+            background: aiMode
+              ? "radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(0, 240, 255, 0.15) 0%, transparent 60%)"
+              : "radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124, 58, 237, 0.15) 0%, transparent 60%)",
+          }}
+        />
 
       {/* 3D Canvas Container */}
-      {/* Fixed via GSAP pinning during scroll */}
       <div className="absolute inset-0 z-10 w-full h-full">
         <Scene3D containerRef={containerRef} />
       </div>
 
-      {/* HTML UI Layer */}
-      {/* Container is pointer-events-none so we don't block 3D interactions */}
-      <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center justify-center md:justify-end pb-24 md:pb-0 pointer-events-none" suppressHydrationWarning>
-        
-        <AnimatePresence mode="wait">
-          {!isMounted || !aiMode ? (
-            /* Right-aligned text block that fades in late in the scroll */
-            <motion.div key="hero-ui-main" className="contents">
-              {/* DoodleHint lives inside Model.tsx (3D Html portal) — not duplicated here */}
-              <motion.div 
-                key="hero-text"
-                initial={{ opacity: 1 }}
-                exit={{ opacity: 0, y: 20, transition: { duration: 0.4 } }}
-                className="hero-text w-full md:w-6/12 text-center md:text-left pointer-events-none"
-              >
-                <div className="text-orange-500 font-mono tracking-[0.2em] text-[10px] md:text-xs mb-4 uppercase font-bold drop-shadow-[0_0_15px_rgba(249,115,22,0.3)] pointer-events-auto inline-block">
-                  <span>FULL STACK ENGINEER • AI PRODUCT BUILDER • STARTUP FOUNDER</span>
-                </div>
-                
-                <h1 className="text-5xl md:text-8xl font-bold tracking-tighter text-white mb-4 pointer-events-auto inline-block">
-                  <span>Mohsin Malik</span>
-                </h1>
-                
-                <h2 className="text-xl md:text-3xl font-medium text-slate-200 mb-6 flex flex-col md:flex-row md:items-center gap-2 pointer-events-auto inline-flex">
-                  <span>Hi, I&apos;m Mohsin Malik.</span>
-                  <span className="text-slate-400"><span>I build real-world web products.</span></span>
-                </h2>
-                
-                <div className="text-slate-400 text-sm md:text-base font-light leading-relaxed max-w-lg mb-8 pointer-events-auto mx-auto md:mx-0">
-                  <span>Full Stack Developer focused on building <span className="text-slate-200"><span>scalable SaaS platforms</span></span>, 
-                  <span className="text-slate-200"><span> AI-integrated applications</span></span>, and <span className="text-slate-200"><span>high-performance web systems</span></span>. 
-                  I turn ideas into production-ready products used by real users.</span>
-                </div>
-                
-                <div className="flex flex-wrap gap-4 mb-10 justify-center md:justify-start">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Built 5+ production web apps</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                    <span>Conducted nationwide AI workshops</span>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] md:text-xs text-slate-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                    <span>Founder @ CodeFlux</span>
-                  </div>
+      {/* Floating Technical Dashboard Widgets (Desktop Only) */}
+      <div
+        className="absolute inset-0 pointer-events-none z-20 hidden md:block"
+        style={{
+          opacity: aiMode ? 0 : 1,
+          transition: "opacity 0.3s ease-in-out",
+        }}
+      >
+        {/* System Active Tag */}
+        <div className="absolute top-8 left-8 border border-white/10 bg-[#0c0d14]/80 backdrop-blur-md px-4 py-2 flex items-center gap-3 shadow-[4px_4px_0px_#7c3aed]">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
+          <span className="font-mono text-[9px] md:text-[10px] font-bold text-white/90 uppercase tracking-wider">{"AI_SYS: STANDBY"}</span>
+        </div>
+      </div>
+
+        {/* HTML UI Layer */}
+        <div className="relative z-20 w-full h-full max-w-7xl mx-auto px-6 md:px-12 flex items-end md:items-center justify-center md:justify-end pb-32 md:pb-0 pointer-events-none" suppressHydrationWarning>
+          <div 
+            className="hero-text-anim w-full md:w-5/12 text-left pointer-events-auto flex flex-col gap-5 md:gap-6"
+            style={{
+              opacity: (!isMounted || !aiMode) ? 1 : 0,
+              pointerEvents: (!isMounted || !aiMode) ? "auto" : "none",
+              transition: "opacity 0.4s ease-in-out",
+            }}
+          >
+                {/* Interactive Category Badges */}
+                <div className="flex flex-wrap gap-2 md:gap-3 pointer-events-auto select-none">
+                  <span className="px-3 py-1.5 border border-white/20 bg-white/5 backdrop-blur-sm text-[10px] font-mono tracking-widest text-[#ffe600] uppercase shadow-[2px_2px_0px_rgba(255,230,0,0.5)]">
+                    {"FULL STACK ENGINEER"}
+                  </span>
+                  <span className="px-3 py-1.5 border border-white/20 bg-white/5 backdrop-blur-sm text-[10px] font-mono tracking-widest text-[#00f0ff] uppercase shadow-[2px_2px_0px_rgba(0,240,255,0.5)]">
+                    {"AI PRODUCT BUILDER"}
+                  </span>
                 </div>
 
-                <div className="flex flex-wrap gap-5 justify-center md:justify-start pointer-events-auto">
+                {/* Heading Group */}
+                <div className="select-none flex flex-col">
+                  <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] font-display tracking-tight">
+                    {"Mohsin "}<br/>
+                    <span className="text-transparent" style={{ WebkitTextStroke: "2.5px #7c3aed" }}>{"Malik"}</span>
+                  </h1>
+                  
+                  <h2 className="text-base md:text-lg font-bold text-[#00f0ff] mt-3 flex items-center gap-1.5 font-mono">
+                    <span>{"Co-Founder @ CodeFlux"}</span>
+                  </h2>
+                </div>
+                
+                {/* Narrative Brutalist Card */}
+                <div className="brutal-card p-5 md:p-6 bg-[#0c0d14] text-white border-3 border-black shadow-[6px_6px_0px_#7c3aed] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_#00f0ff] transition-all duration-300">
+                  <p className="text-slate-300 text-xs md:text-sm leading-relaxed font-normal">
+                    {"Full Stack Developer focused on building "}<span className="underline decoration-[#7c3aed] decoration-2 font-semibold">{"scalable SaaS platforms"}</span>{""}
+                    <span className="underline decoration-[#00f0ff] decoration-2 font-semibold">{" AI-integrated applications"}</span>{" and "}<span className="underline decoration-[#ffe600] decoration-2 font-semibold">{"high-performance web systems"}</span>{"."}
+                    {" I turn ideas into production-ready products used by real users."}
+                  </p>
+                </div>
+
+                {/* Call-to-actions */}
+                <div className="flex flex-wrap gap-3 mt-2">
                   <button 
                     onClick={() => {
-                        const projects = document.getElementById("projects");
-                        if (projects) projects.scrollIntoView({ behavior: "smooth" });
+                      const projects = document.getElementById("projects");
+                      if (projects) projects.scrollIntoView({ behavior: "smooth" });
                     }}
-                    className="px-8 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm tracking-wide hover:from-orange-600 hover:to-amber-600 transition-all duration-300 shadow-[0_0_20px_rgba(249,115,22,0.25)] hover:shadow-[0_0_35px_rgba(249,115,22,0.4)] hover:-translate-y-0.5 active:scale-95 active:translate-y-0 relative overflow-hidden group">
-                    <span className="relative z-10">View Projects</span>
-                    <span className="absolute inset-0 h-full w-full bg-gradient-to-r from-white/0 via-white/20 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
+                    className="brutal-btn px-5 py-3 bg-[#ffe600] text-black text-xs md:text-sm hover:bg-[#ebd400] hover:shadow-[4px_4px_0px_#7c3aed]">
+                    {"View Projects"}
                   </button>
                   <button 
                     onClick={() => setIsResumeOpen(true)}
-                    className="px-8 py-3.5 rounded-xl border border-orange-500/50 text-orange-400 font-bold text-sm tracking-wide hover:bg-orange-500/10 hover:border-orange-500 transition-all duration-300 active:scale-95"
+                    className="brutal-btn px-5 py-3 bg-[#0c0d14] text-white border-2 border-black shadow-[4px_4px_0px_#7c3aed] hover:bg-[#151722] hover:shadow-[4px_4px_0px_#00f0ff] text-xs md:text-sm"
                   >
-                    Read Resume
+                    {"Read Resume"}
                   </button>
                   <button 
                     onClick={() => useUIStore.getState().setAiMode(true)}
-                    className="flex items-center gap-2 px-8 py-3.5 rounded-xl border border-blue-500/50 text-blue-400 font-bold text-sm tracking-wide hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300 active:scale-95 bg-blue-500/5 backdrop-blur-sm"
+                    className="brutal-btn px-5 py-3 bg-[#00f0ff] text-black text-xs md:text-sm flex items-center gap-1.5 hover:bg-[#00dded] shadow-[4px_4px_0px_#7c3aed]"
                   >
-                    <Mic size={16} />
-                    Talk to AI
+                    <Mic size={14} />
+                    {"Talk to AI"}
                   </button>
                 </div>
-            </motion.div>
-            </motion.div>
-          ) : (
-            <motion.div
-              key="ai-widget"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="w-full md:w-5/12 pointer-events-auto flex justify-end"
-            >
-              {/* Force show AIVoiceWidget and bypass its own animation state wrapper to rely on Framer Motion here */}
-              <ClientOnly>
-                <AIVoiceWidget forceShow={true} />
-              </ClientOnly>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-      </div>
-
-      {/* End of scale+blur wrapper — scroll indicator is outside so it stays crisp */}
+          </div>
+        </div>
+          {/* Scroll indicator - fades out on scroll dynamically, and hidden on aiMode */}
+          <div
+            className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 text-white/40 text-xs font-mono tracking-widest uppercase flex flex-col items-center gap-3 animate-pulse"
+            style={{
+              opacity: (!isMounted || !aiMode) ? 1 : 0,
+              transition: "opacity 0.3s ease-in-out",
+              pointerEvents: "none",
+            }}
+          >
+            <span className="flex flex-col items-center gap-3">
+              <span><span>{"Scroll"}</span></span>
+              <span className="w-[1px] h-12 bg-gradient-to-b from-white/40 to-transparent" />
+            </span>
+          </div>
       </motion.div>
-
-      {/* Scroll indicator - fades out on scroll dynamically, and hidden on aiMode */}
-      <AnimatePresence>
-        {(!isMounted || !aiMode) && (
-            <div className="scroll-indicator absolute bottom-10 left-1/2 -translate-x-1/2 text-white/50 text-xs font-mono tracking-widest uppercase flex flex-col items-center gap-3 animate-pulse">
-              <span className="flex flex-col items-center gap-3">
-                <span><span>Scroll</span></span>
-                <span className="w-[1px] h-12 bg-gradient-to-b from-white/50 to-transparent" />
-              </span>
-            </div>
-        )}
-      </AnimatePresence>
       <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
     </section>
   );

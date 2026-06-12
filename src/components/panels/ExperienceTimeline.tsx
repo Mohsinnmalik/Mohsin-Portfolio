@@ -191,7 +191,7 @@ export const ExperienceTimeline = () => {
                     initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="text-orange-500 font-bold tracking-[0.6em] text-[10px] uppercase mb-4"
+                    className="text-[#00f0ff] font-bold tracking-[0.6em] text-[10px] uppercase mb-4 font-mono"
                 >
                     Milestones
                 </motion.span>
@@ -200,7 +200,7 @@ export const ExperienceTimeline = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.1 }}
-                    className="text-4xl md:text-6xl font-black text-white tracking-tighter"
+                    className="text-4xl md:text-6xl font-extrabold text-white tracking-tighter font-display"
                 >
                     Memory Lane
                 </motion.h2>
@@ -300,7 +300,7 @@ export const ExperienceTimeline = () => {
                                 className="flex flex-col"
                             >
                                 <span className="timeline-date">{nextItem.date}</span>
-                                <h3 className="text-5xl font-black text-white/40 leading-none">{nextItem.title}</h3>
+                                <h3 className="text-5xl font-extrabold text-white/20 leading-none font-display">{nextItem.title}</h3>
                             </motion.div>
                         </AnimatePresence>
                     </div>

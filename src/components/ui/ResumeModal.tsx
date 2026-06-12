@@ -58,17 +58,21 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="resume-modal-title"
             className="relative w-full max-w-5xl bg-slate-900 border border-white/10 rounded-3xl overflow-hidden shadow-2xl flex flex-col md:flex-row h-[90vh] md:h-auto max-h-[90vh] pointer-events-auto"
           >
             {/* Left Side: Controls & Info */}
             <div className="w-full md:w-1/3 p-8 border-r border-white/10 flex flex-col justify-between bg-black/40">
               <div>
                 <div className="flex items-center justify-between mb-8">
-                   <h2 className="text-2xl font-bold text-white leading-tight">Expertise Selection</h2>
+                   <h2 id="resume-modal-title" className="text-2xl font-bold text-white leading-tight">Expertise Selection</h2>
                    <button
                       onClick={onClose}
                       className="md:hidden p-2 rounded-full bg-white/5 text-white/50 hover:text-white"
                       type="button"
+                      aria-label="Close resume modal"
                     >
                       <X size={20} />
                     </button>
@@ -145,6 +149,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                        alt="Resume Layout"
                        width={1200}
                        height={1600}
+                       priority
                        className="w-full h-auto"
                      />
                  </div>
@@ -153,6 +158,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                  <button
                     onClick={onClose}
                     type="button"
+                    aria-label="Close resume modal"
                     className="hidden md:flex absolute top-4 right-4 p-2 rounded-full bg-black/50 backdrop-blur-md border border-white/10 text-white/50 hover:text-white transition-all hover:scale-110"
                   >
                     <X size={20} />

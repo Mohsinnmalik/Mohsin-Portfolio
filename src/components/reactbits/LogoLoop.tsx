@@ -1,5 +1,6 @@
 "use client";
-import React, { useRef, useEffect } from 'react';
+
+import React, { useMemo } from 'react';
 import Image from 'next/image';
 import './LogoLoop.css';
 
@@ -24,92 +25,32 @@ const LogoLoop = ({
   pauseOnHover?: boolean;
   scaleOnHover?: number;
 }) => {
-  const trackRef = useRef<HTMLDivElement>(null);
+  // Calculate marquee speed based on number of items to keep movement linear
+  const duration = useMemo(() => {
+    const itemCount = items.length || 1;
+    return Math.max(5, (itemCount * 80) / Math.max(1, speed));
+  }, [items.length, speed]);
 
-  useEffect(() => {
-    let animationFrameId: number;
-    let lastTime = performance.now();
-
-    const animate = (time: number) => {
-      const dt = time - lastTime;
-      lastTime = time;
-
-      if (trackRef.current && trackRef.current.parentElement) {
-        const track = trackRef.current;
-        const container = track.parentElement;
-        const speedPerMs = speed / 1000;
-        const moveAmount = speedPerMs * dt;
-
-        if (vertical) {
-          const firstItem = track.children[0] as HTMLElement;
-          if (firstItem) {
-            const itemHeight = firstItem.offsetHeight + gap;
-            
-            const currentTransform = new DOMMatrixReadOnly(window.getComputedStyle(track).getPropertyValue('transform')).m42;
-            const newTransform = currentTransform - moveAmount;
-            track.style.transform = `translateY(${newTransform}px)`;
-
-            if (Math.abs(newTransform) >= itemHeight) {
-              track.style.transform = `translateY(${newTransform + itemHeight}px)`;
-              track.appendChild(firstItem);
-            }
-          }
-        } else {
-          const firstItem = track.children[0] as HTMLElement;
-          if (firstItem) {
-            const itemWidth = firstItem.offsetWidth + gap;
-
-            const currentTransform = new DOMMatrixReadOnly(window.getComputedStyle(track).getPropertyValue('transform')).m41;
-            const newTransform = currentTransform - moveAmount;
-            track.style.transform = `translateX(${newTransform}px)`;
-
-            if (Math.abs(newTransform) >= itemWidth) {
-              track.style.transform = `translateX(${newTransform + itemWidth}px)`;
-              track.appendChild(firstItem);
-            }
-          }
-        }
-      }
-
-      animationFrameId = requestAnimationFrame(animate);
-    };
-
-    animationFrameId = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [speed, gap, vertical]);
+  const cardStyle = useMemo(() => {
+    return {
+      '--logoloop-gap': `${gap}px`,
+      '--logoloop-logoHeight': `${logoHeight}px`,
+      '--logoloop-duration': `${duration}s`,
+      '--logoloop-pause-state': pauseOnHover ? 'paused' : 'running'
+    } as React.CSSProperties;
+  }, [gap, logoHeight, duration, pauseOnHover]);
 
   return (
     <div
       className={`logoloop ${vertical ? 'logoloop--vertical' : ''} ${className}`}
-      style={
-        {
-          '--logoloop-gap': `${gap}px`,
-          '--logoloop-logoHeight': `${logoHeight}px`
-        } as React.CSSProperties
-      }
+      style={cardStyle}
     >
       <div
-        className="logoloop__track"
-        ref={trackRef}
-        style={{
-          transition: pauseOnHover ? 'animation-play-state 0.3s' : '',
-          animationPlayState: 'running'
-        }}
-        onMouseEnter={(e) => {
-          if (pauseOnHover) {
-            e.currentTarget.style.animationPlayState = 'paused';
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (pauseOnHover) {
-            e.currentTarget.style.animationPlayState = 'running';
-          }
-        }}
+        className={`logoloop__track ${vertical ? 'logoloop__track--vertical' : 'logoloop__track--horizontal'}`}
       >
         {items.map((item, index) => (
           <div
-            key={index}
+            key={`orig-${index}`}
             className={`logoloop__item ${scaleOnHover ? 'logoloop--scale-hover' : ''}`}
             style={scaleOnHover ? { transition: 'transform 0.3s', cursor: 'default' } : {}}
             onMouseEnter={(e) => {
@@ -137,7 +78,7 @@ const LogoLoop = ({
             )}
           </div>
         ))}
-        {/* Clone for seamless loop initialization */}
+        {/* Clone for seamless loop */}
         {items.map((item, index) => (
           <div
             key={`clone-${index}`}

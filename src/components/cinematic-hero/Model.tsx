@@ -15,8 +15,15 @@ export function Model(props: GroupProps) {
   const { scene } = useGLTF("/models/mohsin.glb");
   const setAiMode = useUIStore((state) => state.setAiMode);
   const aiMode = useUIStore((state) => state.aiMode);
+  const setModelLoaded = useUIStore((state) => state.setModelLoaded);
   // 3D: Single mobile detection — no window.innerWidth in useFrame
   const isMobile = useMobile();
+
+  useEffect(() => {
+    if (scene) {
+      setModelLoaded(true);
+    }
+  }, [scene, setModelLoaded]);
 
   const [isHolding, setIsHolding] = useState(false);
   const holdTimer = useRef<NodeJS.Timeout | null>(null);
@@ -122,47 +129,45 @@ export function Model(props: GroupProps) {
     >
       <primitive object={scene} />
 
-      {!aiMode && !isHolding && (
-        <Html 
-          position={[0.6, 1.2, 0]} 
-          center 
-          zIndexRange={[100, 0]}
-          className="pointer-events-none transition-opacity duration-300"
-        >
-          <div style={{ transform: "scale(1.5)", zIndex: 999 }}>
-            <DoodleHint />
-          </div>
-        </Html>
-      )}
+      <Html 
+        position={[0.6, 1.2, 0]} 
+        center 
+        zIndexRange={[100, 0]}
+        className={`pointer-events-none transition-opacity duration-300 ${aiMode || isHolding ? "opacity-0" : "opacity-100"}`}
+      >
+        <div style={{ transform: "scale(1.5)", zIndex: 999 }}>
+          <DoodleHint />
+        </div>
+      </Html>
 
-      {isHolding && !aiMode && (
-        <Html 
-          position={[0, 1.5, 0]} 
-          center 
-          zIndexRange={[100, 0]}
-          className="pointer-events-none transition-opacity duration-300"
-        >
-          <div className="flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-md px-6 py-4 rounded-2xl border border-orange-500/50">
-            <span className="text-orange-500 font-mono text-sm tracking-widest uppercase animate-pulse">
-              Initializing AI...
-            </span>
-            <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+      <Html 
+        position={[0, 1.5, 0]} 
+        center 
+        zIndexRange={[100, 0]}
+        className={`pointer-events-none transition-opacity duration-300 ${isHolding && !aiMode ? "opacity-100" : "opacity-0"}`}
+      >
+        <div className="flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-md px-6 py-4 rounded-2xl border border-orange-500/50">
+          <span className="text-orange-500 font-mono text-sm tracking-widest uppercase animate-pulse">
+            Initializing AI...
+          </span>
+          <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+            {isHolding && (
               <div 
                 className="h-full bg-orange-500"
                 style={{ 
                   animation: "fillProgress 2.5s linear forwards" 
                 }}
               />
-            </div>
+            )}
           </div>
-          <style>{`
-            @keyframes fillProgress {
-              0% { width: 0%; }
-              100% { width: 100%; }
-            }
-          `}</style>
-        </Html>
-      )}
+        </div>
+        <style>{`
+          @keyframes fillProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+          }
+        `}</style>
+      </Html>
     </group>
   );
 }

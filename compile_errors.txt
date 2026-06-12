@@ -1,1 +1,0 @@
-src/components/cinematic-hero/ScrollAnimationWrapper.tsx(10,27): error TS2503: Cannot find namespace 'THREE'.

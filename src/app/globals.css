@@ -3,47 +3,145 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: #0a0b10;
+    --foreground: #ffffff;
+    --border: #000000;
+    
+    --primary: #ffe600;
+    --primary-foreground: #000000;
+    
+    --secondary: #7c3aed;
+    --secondary-foreground: #ffffff;
+    
+    --tertiary: #00f0ff;
+    --accent-green: #2ee59d;
+    
+    --card: #0c0d14;
+    --card-foreground: #ffffff;
+  }
+
   * {
-    @apply border-border;
+    border-color: #000000;
     -webkit-tap-highlight-color: transparent;
     box-sizing: border-box;
+    /* Chunky custom pixel-art cursor: Cyber Yellow pointer */
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%23FFE600' stroke='%23000000' stroke-width='2'%3E%3Cpolygon points='0,0 16,0 12,12 8,8 0,16'/%3E%3C/svg%3E"), auto !important;
   }
+  
+  a, button, select, [role="button"], .cursor-target {
+    /* Interactive cursor: Royal Purple pointer */
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='%237C3AED' stroke='%23000000' stroke-width='2'%3E%3Cpolygon points='0,0 16,0 12,12 8,8 0,16'/%3E%3C/svg%3E"), pointer !important;
+  }
+
+  input, textarea, [contenteditable] {
+    /* Always show text cursor on inputs — never override with custom cursor */
+    cursor: text !important;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 1;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-lexend), sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-space-grotesk), sans-serif;
+    font-weight: 800;
+    letter-spacing: -0.02em;
   }
 }
 
-/* Custom premium hover and glow effects */
+/* Neo-Brutalist Utility Styles */
+.brutal-card {
+  background-color: var(--card);
+  color: var(--card-foreground);
+  border: 3px solid #000000;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.brutal-card-hover:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px 0px #000000;
+}
+
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-space-mono), monospace;
+  font-weight: 700;
+  border: 3px solid #000000;
+  border-radius: 4px;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+
+.brutal-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #000000;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px 0px #000000;
+}
+
+.brutal-input {
+  border: 3px solid #000000;
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: var(--font-lexend), sans-serif;
+  box-shadow: 2px 2px 0px 0px #000000;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.brutal-input:focus {
+  outline: none;
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px 0px #000000;
+}
+
+/* Fallback/adapted premium hover and glow effects */
 .glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: #ffffff;
+  border: 3px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
 }
 
 .glow-text {
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  text-shadow: 2px 2px 0px #ffe600, 4px 4px 0px #7c3aed;
 }
 
 .gradient-text {
-  background: linear-gradient(to right, #fff, #a1a1aa);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  background: #000000;
+  -webkit-background-clip: unset;
+  background-clip: unset;
+  -webkit-text-fill-color: initial;
 }
 
 /* Hide scrollbar for clean look */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: black;
+  background: #0a0b10;
+  border-left: 3px solid #000000;
 }
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+  background: #ffe600;
+  border: 3px solid #000000;
+  border-radius: 0px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #7c3aed;
 }
 
 /* Mobile Paint Optimization */
@@ -64,4 +162,3 @@
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
 }
-
